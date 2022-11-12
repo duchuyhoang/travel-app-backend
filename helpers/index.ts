@@ -1,4 +1,4 @@
-import { DB_ERROR_MESSAGES } from "@common/constants";
+import { DB_ERROR_MESSAGES, UPLOAD_FOLDER } from "@common/constants";
 import { Key_And_Value } from "@daos/BaseDao";
 import { DBError } from "@models/DBError";
 import { NextFunction, Response } from "express";
@@ -62,3 +62,7 @@ export function get(obj: any, path: string) {
   }
   return current;
 }
+
+export const getFileName = (file: Express.Multer.File) => {
+  return `/${UPLOAD_FOLDER}/${file.filename}`;
+};

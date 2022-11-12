@@ -1,12 +1,13 @@
 import { Client, DatabaseError, QueryResult } from "pg";
 import cryto from "crypto";
 import { NextFunction, Request, Response } from "express";
-import { DB_ERROR_MESSAGES, STATUS_CODE } from "@common/constants";
+import { STATUS_CODE } from "@common/constants";
 import {
   jsonResponse,
   throwDBError,
   log,
   convertDataToUpdateQuery,
+  getFileName,
 } from "@helpers/index";
 import {
   CreateUserPayload,
@@ -55,6 +56,7 @@ const authenticationController = {
       });
     } catch (e) {
       console.log(e);
+      return jsonResponse(res, "Unexpected error", STATUS_CODE.BAD_REQUEST);
     }
   },
   signUp: async (req: Request, res: Response, next: NextFunction) => {
@@ -67,6 +69,8 @@ const authenticationController = {
       mobile = null,
       name,
     } = req.body as CreateUserPayload;
+    const avatar = req.file ? getFileName(req.file) : null;
+
     const salt = cryto.randomBytes(16).toString("hex");
 
     const hashedPassword = cryto
@@ -75,16 +79,15 @@ const authenticationController = {
     try {
       const result = await userDao.signUp({
         email,
-        info,
-        mobile,
+        info: info || null,
+        mobile: mobile || null,
         name,
         password_hash: hashedPassword,
-        avatar: "",
+        avatar,
         permission: PERMISSION.USER,
         method: AUTH_METHOD.PASSWORD,
         salt,
       });
-      console.log("rs", result.rows[0]);
       jsonResponse(res, "Created", STATUS_CODE.CREATED, {});
     } catch (e) {
       throwDBError(e as DatabaseError, next);
@@ -110,7 +113,7 @@ const authenticationController = {
         const insertedUserResult = await userDao.insertOne({
           ...data,
           permission: PERMISSION.USER,
-		  method
+          method,
         });
         const insertedUser = insertedUserResult.rows[0];
         if (insertedUser) {
@@ -130,8 +133,48 @@ const authenticationController = {
       });
     } catch (e) {
       log(e);
-	  next(new DBError("Login social failed", []));
+      next(new DBError("Login social failed", []));
     }
+  },
+  edit: async (req: Request, res: Response, next: NextFunction) => {
+    const client: Client = req.client;
+    const userDao = new UserDao(client);
+    const {
+      info = null,
+      mobile = null,
+      name = null,
+    } = req.body as CreateUserPayload;
+    console.log(req.file);
+
+    const avatar = req.file ? getFileName(req.file) : null;
+    const curUser = req.user;
+	console.log(curUser);	
+    if (!curUser || curUser.method !== AUTH_METHOD.PASSWORD)
+      return jsonResponse(res, "Cannot edit user", STATUS_CODE.BAD_REQUEST);
+    try {
+      const result = await userDao.updateOne(
+        [
+          { key: "info", value: info || null },
+          { key: "mobile", value: mobile || null },
+          { key: "name", value: name || null },
+          { key: "avatar", value: avatar },
+        ],
+        [
+          {
+            key: "id",
+            value: curUser.id,
+          },
+        ],
+        {
+          remainFieldIfNull: true,
+        }
+      );
+      if (result.rowCount === 0)
+        return jsonResponse(res, "User doesn't exist", STATUS_CODE.BAD_REQUEST);
+    } catch (e) {
+      return jsonResponse(res, "User doesn't exist", STATUS_CODE.BAD_REQUEST);
+    }
+    return jsonResponse(res, "Edit succeed", STATUS_CODE.SUCCESS);
   },
 };
 

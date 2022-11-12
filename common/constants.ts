@@ -18,3 +18,5 @@ export const DB_ERROR_MESSAGES: {
   "23505": "Violent key constraint",
 };
 
+export const MAX_FILE_SIZE = 5 * 1000000;
+export const UPLOAD_FOLDER = "uploads"

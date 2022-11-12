@@ -1,14 +1,18 @@
 import { PERMISSION, AUTH_METHOD } from "@common/enum";
 
-export interface User {
+export interface UserInfo {
   id: number;
   name: string;
   email: string;
   mobile: Maybe<string>;
-  password_hash: string;
   info: Maybe<string>;
   avatar: Maybe<string>;
   permission: PERMISSION;
+  method: AUTH_METHOD;
+}
+
+export interface User extends UserInfo {
+  password_hash: string;
   method: AUTH_METHOD;
   salt: string;
 }

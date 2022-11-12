@@ -1,6 +1,47 @@
-import { EMAIL_REGEX, MOBILE_REGEX } from "@common/constants";
+import { EMAIL_REGEX, MAX_FILE_SIZE, MOBILE_REGEX } from "@common/constants";
+import { isImage } from "@middleware/file";
 import * as yup from "yup";
 import { AUTH_METHOD } from "./enum";
+
+const multipleImageValidation = yup
+  .array()
+  .test("file-invalid", "Only image required", (values) => {
+    if (!values) return true;
+    return values.every(isImage);
+  })
+  .test("file-too-large", "File is too large, 5MB is allowed", (values) => {
+    if (!values) return true;
+    return values.every((v) => v.size < MAX_FILE_SIZE);
+  });
+
+const singleImageValidation = yup
+  .mixed()
+  .test("file-invalid", "Only image required", (value) => {
+    if (!value) return true;
+    return isImage(value);
+  })
+  .test("file-too-large", "File is too large, 5MB is allowed", (value) => {
+    if (!value) return true;
+    return value.size < MAX_FILE_SIZE;
+  });
+
+const userInfoValidation = {
+  mobile: yup
+    .string()
+    .nullable()
+    .notRequired()
+    .test("mobile-valid", "Mobile is not valid", (v) => {
+      if (!v) return true;
+      return MOBILE_REGEX.test(v);
+    }),
+  name: yup
+    .string()
+    .required("Name required")
+    .min(6, "Name at lease 6 characters")
+    .max(255, "Name is too long"),
+  info: yup.string().nullable().notRequired().max(255, "Description too long"),
+  avatar: singleImageValidation,
+};
 
 export const signUpSchema = yup.object().shape({
   email: yup
@@ -12,17 +53,7 @@ export const signUpSchema = yup.object().shape({
     .required("Password required")
     .min(6, "Password at least 6 characters")
     .max(255, "Password is too long"),
-  mobile: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(MOBILE_REGEX, "Mobile is not valid"),
-  name: yup
-    .string()
-    .required("Name required")
-    .min(6, "Name at lease 6 characters")
-    .max(255, "Name is too long"),
-  info: yup.string().nullable().notRequired().max(255, "Description too long"),
+  ...userInfoValidation,
 });
 
 export const loginSchema = yup.object().shape({
@@ -39,3 +70,5 @@ export const loginSocialSchema = yup.object().shape({
     return value === AUTH_METHOD.FB || value === AUTH_METHOD.GOOGLE;
   }),
 });
+
+export const editProfileSchema = yup.object().shape({ ...userInfoValidation });
