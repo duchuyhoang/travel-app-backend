@@ -4,7 +4,7 @@ import * as yup from "yup";
 
 export const validate = (
   schema: yup.ObjectSchema<any, any, any, any>,
-  fields: Array<"body" | "params" | "file" | "files">
+  fields: Array<"body" | "query" | "file" | "files">
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const datas = fields.reduce((prev, field) => {

@@ -20,6 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.8.0",
+    "pg-promise": "^10.12.1",
     "swagger-ui-express": "^4.6.0",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.3",

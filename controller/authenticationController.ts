@@ -55,7 +55,6 @@ const authenticationController = {
         accessToken: signToken(info),
       });
     } catch (e) {
-      console.log(e);
       return jsonResponse(res, "Unexpected error", STATUS_CODE.BAD_REQUEST);
     }
   },
@@ -144,7 +143,6 @@ const authenticationController = {
       mobile = null,
       name = null,
     } = req.body as CreateUserPayload;
-    console.log(req.file);
 
     const avatar = req.file ? getFileName(req.file) : null;
     const curUser = req.user;

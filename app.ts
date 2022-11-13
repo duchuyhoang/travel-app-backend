@@ -6,6 +6,7 @@ import cors from "cors";
 import client from "./common/connection";
 import userRouter from "@router/user";
 import mediaRouter from "@router/media";
+import tagRouter from "@router/tag";
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";
 import { DBError } from "@models/DBError";
@@ -34,6 +35,7 @@ const runServer = async () => {
     });
     app.use("/user", userRouter);
     app.use("/media", mediaRouter);
+    app.use("/tag", tagRouter);
 
     app.get("/hello", (req, res) => {
       res.json({ mes: "xxx" });
@@ -47,11 +49,11 @@ const runServer = async () => {
         next: NextFunction
       ) => {
         console.log(error);
-        let errors = [];
+        let errors: Array<any> = [];
         if (error instanceof MulterError) {
           errors.push({ message: "Error upload file" });
         } else {
-          errors = error?.getErrorList();
+          if (error?.getErrorList) errors = error?.getErrorList();
         }
         res.status(400).json({
           errors,

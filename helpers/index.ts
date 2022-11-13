@@ -69,10 +69,67 @@ export const getFileName = (file: Express.Multer.File) => {
   return `/${UPLOAD_FOLDER}/${file.filename}`;
 };
 
-export function fullUrl(req: Request,pathname?:string) {
+export function fullUrl(req: Request, pathname?: string) {
   return url.format({
     protocol: req.protocol,
     host: req.get("host"),
     pathname: pathname || req.originalUrl,
   });
+}
+export const convertToBulkInsert = (
+  payload: Array<any>,
+  fields: Array<string>
+) => {
+  const data: Array<{
+    key: string;
+    value: Array<any>;
+  }> = [];
+  payload.forEach((value) => {
+    fields.forEach((field, index) => {
+      data[index]
+        ? data[index]["value"].push(value[field])
+        : (data[index] = {
+            key: field,
+            value: [value[field]],
+          });
+    });
+  });
+  return data;
+};
+
+const notNull = (value: any) => {
+  return value !== undefined && value !== null && !isNaN(value);
+};
+
+export const pagination = (
+  list: Array<any>,
+  limit?: number,
+  offset?: number
+) => {
+  return {
+    data:
+      notNull(offset) && notNull(limit)
+        ? list.slice(offset!, (offset! + 1) * limit!)
+        : list,
+    metadata: {
+      total: list.length,
+      totalPage: notNull(limit) ? Math.ceil(list.length / limit!) : 1,
+      page:
+        notNull(limit) && notNull(offset)
+          ? Math.ceil(offset! / limit!) === 0
+            ? 1
+            : Math.floor(offset! / limit!) + 1
+          : 1,
+      limit: limit,
+      hasMore:
+        notNull(limit) && notNull(offset)
+          ? list.length > offset! * limit!
+          : false,
+    },
+  };
+};
+
+export function isInDesiredForm(str: any) {
+  var n = Math.floor(Number(str));
+  return n !== Infinity && String(n) === str && n >= 0;
 }

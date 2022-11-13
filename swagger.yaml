@@ -11,6 +11,8 @@ tags:
     description: "Authentication router"
   - name: media
     description: "Media service"
+  - name: tags
+    description: "Tags router"
 
 paths:
   /user/signUp:
@@ -262,6 +264,150 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
+  /tag/:
+    get:
+      tags:
+        - tags
+      summary: Get tags
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: List tags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Tag"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Get tags failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+    post:
+      tags:
+        - tags
+      summary: Create tags
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: List tags
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  description: List tags
+                  items:
+                    type: object
+                    properties:
+                      tag_name:
+                        type: string
+                      tag_description:
+                        type: string
+
+      responses:
+        "200":
+          description: Add tags succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#components/schemas/Tag"
+
+        "400":
+          description: Add tags failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    delete:
+      tags:
+        - tags
+      summary: Delete tags
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Delete tags
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  description: List tag ids
+                  items:
+                    type: number
+
+      responses:
+        "200":
+          description: Delete tag succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Delete tags succeed
+
+        "400":
+          description: Delete tags failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
 components:
   schemas:
     User:
@@ -304,6 +450,38 @@ components:
             - FB
             - GOOGLE
             - PASSWORD
+
+    Tag:
+      type: object
+      properties:
+        id_tag:
+          type: integer
+          format: int64
+          example: 1
+        tag_name:
+          type: string
+          example: Tag1
+        tag_description:
+          type: string
+          example: Tag1 description
+        del_flag:
+          type: number
+          example: 1
+
+    Metadata:
+      type: object
+      properties:
+        total:
+          type: number
+        totalPage:
+          type: number
+        page:
+          type: number
+        limit:
+          type: number
+        hasMore:
+          type: boolean
+
     ValidationError:
       type: object
       properties:

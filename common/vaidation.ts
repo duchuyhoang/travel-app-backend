@@ -1,4 +1,5 @@
 import { EMAIL_REGEX, MAX_FILE_SIZE, MOBILE_REGEX } from "@common/constants";
+import { isInDesiredForm } from "@helpers/index";
 import { isImage } from "@middleware/file";
 import * as yup from "yup";
 import { AUTH_METHOD } from "./enum";
@@ -70,4 +71,44 @@ export const loginSocialSchema = yup.object().shape({
 export const editProfileSchema = yup.object().shape({ ...userInfoValidation });
 export const mediaUploadSchema = yup.object().shape({
   files: multipleFileValidation,
+});
+
+export const createTagsSchema = yup.object().shape({
+  tags: yup
+    .array()
+    .typeError("Must be an array")
+    .test("Valid schema", "Invalid object", (values) => {
+      return !!values?.every((v) => {
+        const keys = Object.keys(v);
+        return ["tag_name", "tag_description"].every((field) =>
+          keys.includes(field)
+        );
+      });
+    }),
+});
+
+export const getTagSchema = yup.object().shape({
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+});
+
+export const deleteTagsSchema = yup.object().shape({
+  tags: yup
+    .array()
+    .typeError("Must be array of id")
+    .test("valid ids", "Must not empty", (v) => {
+      return !!v?.length;
+    }),
 });

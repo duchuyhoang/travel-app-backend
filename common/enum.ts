@@ -8,3 +8,8 @@ export enum AUTH_METHOD {
   GOOGLE = "GOOGLE",
   PASSWORD = "PASSWORD",
 }
+
+export enum DEL_FLAG {
+  EXIST = 1,
+  DELETED = 0,
+}
