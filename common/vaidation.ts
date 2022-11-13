@@ -3,12 +3,8 @@ import { isImage } from "@middleware/file";
 import * as yup from "yup";
 import { AUTH_METHOD } from "./enum";
 
-const multipleImageValidation = yup
+const multipleFileValidation = yup
   .array()
-  .test("file-invalid", "Only image required", (values) => {
-    if (!values) return true;
-    return values.every(isImage);
-  })
   .test("file-too-large", "File is too large, 5MB is allowed", (values) => {
     if (!values) return true;
     return values.every((v) => v.size < MAX_FILE_SIZE);
@@ -72,3 +68,6 @@ export const loginSocialSchema = yup.object().shape({
 });
 
 export const editProfileSchema = yup.object().shape({ ...userInfoValidation });
+export const mediaUploadSchema = yup.object().shape({
+  files: multipleFileValidation,
+});

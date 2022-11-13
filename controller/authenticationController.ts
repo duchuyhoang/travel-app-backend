@@ -148,7 +148,6 @@ const authenticationController = {
 
     const avatar = req.file ? getFileName(req.file) : null;
     const curUser = req.user;
-	console.log(curUser);	
     if (!curUser || curUser.method !== AUTH_METHOD.PASSWORD)
       return jsonResponse(res, "Cannot edit user", STATUS_CODE.BAD_REQUEST);
     try {

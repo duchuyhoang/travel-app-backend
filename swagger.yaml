@@ -9,6 +9,8 @@ servers:
 tags:
   - name: user
     description: "Authentication router"
+  - name: media
+    description: "Media service"
 
 paths:
   /user/signUp:
@@ -196,7 +198,70 @@ paths:
           content:
             application/json:
               schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
                 $ref: "#components/schemas/UnauthorizedError"
+
+  /media/upload:
+    post:
+      tags:
+        - media
+      summary: Upload media
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: List files
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  description: List
+                  discriminator:
+                    propertyName: "xxxx"
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Upload succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+
+        "400":
+          description: Cannot edit profile
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
 components:
   schemas:
     User:

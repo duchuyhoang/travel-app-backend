@@ -1,9 +1,11 @@
 import { DB_ERROR_MESSAGES, UPLOAD_FOLDER } from "@common/constants";
 import { Key_And_Value } from "@daos/BaseDao";
 import { DBError } from "@models/DBError";
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { DatabaseError } from "pg";
 import { inspect } from "util";
+
+var url = require("url");
 
 export const jsonResponse = (
   res: Response,
@@ -66,3 +68,11 @@ export function get(obj: any, path: string) {
 export const getFileName = (file: Express.Multer.File) => {
   return `/${UPLOAD_FOLDER}/${file.filename}`;
 };
+
+export function fullUrl(req: Request,pathname?:string) {
+  return url.format({
+    protocol: req.protocol,
+    host: req.get("host"),
+    pathname: pathname || req.originalUrl,
+  });
+}

@@ -4,7 +4,8 @@ import path from "path";
 import bodyParser from "body-parser";
 import cors from "cors";
 import client from "./common/connection";
-import userRouter from "./router/user";
+import userRouter from "@router/user";
+import mediaRouter from "@router/media";
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";
 import { DBError } from "@models/DBError";
@@ -32,6 +33,8 @@ const runServer = async () => {
       next();
     });
     app.use("/user", userRouter);
+    app.use("/media", mediaRouter);
+
     app.get("/hello", (req, res) => {
       res.json({ mes: "xxx" });
     });
@@ -43,7 +46,7 @@ const runServer = async () => {
         res: Response,
         next: NextFunction
       ) => {
-		console.log(error);		
+        console.log(error);
         let errors = [];
         if (error instanceof MulterError) {
           errors.push({ message: "Error upload file" });
