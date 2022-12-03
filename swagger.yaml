@@ -13,6 +13,8 @@ tags:
     description: "Media service"
   - name: tags
     description: "Tags router"
+  - name: post
+    description: "Post router"
 
 paths:
   /user/signUp:
@@ -264,6 +266,241 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
+  /post:
+    get:
+      tags:
+        - post
+      summary: Get posts
+
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Get list post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Post"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Create post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    post:
+      tags:
+        - post
+      summary: Create post
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: List tags
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  description: List tags
+                  items:
+                    type: string
+                content:
+                  type: string
+                  description: Post content(HTML)
+                title:
+                  type: string
+                  description: Post title
+      responses:
+        "201":
+          description: Create post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#components/schemas/Post"
+
+        "400":
+          description: Create post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+  /post/{id_post}:
+    get:
+      tags:
+        - post
+      summary: Get post by id
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    $ref: "#components/schemas/Post"
+
+        "400":
+          description: Edit post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    patch:
+      tags:
+        - post
+      summary: Edit post
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Edit post
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  description: List tags
+                  items:
+                    type: string
+                content:
+                  type: string
+                  description: Post content(HTML)
+                title:
+                  type: string
+                  description: Post title
+      responses:
+        "200":
+          description: Edit post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Succeed
+
+        "400":
+          description: Edit post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    delete:
+      tags:
+        - post
+      summary: Delete post by id
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        "400":
+          description: Delete post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
   /tag/:
     get:
       tags:
@@ -340,7 +577,7 @@ paths:
                         type: string
 
       responses:
-        "200":
+        "201":
           description: Add tags succeed
           content:
             application/json:
@@ -467,6 +704,27 @@ components:
         del_flag:
           type: number
           example: 1
+
+    Post:
+      type: object
+      properties:
+        id_post:
+          type: number
+        author:
+          type: object
+          $ref: "#components/schemas/User"
+        title:
+          type: string
+        slug:
+          type: string
+        content:
+          type: string
+        create_at:
+          type: string
+        del_flag:
+          type: number
+        status:
+          type: string
 
     Metadata:
       type: object

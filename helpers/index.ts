@@ -84,13 +84,13 @@ export const convertToBulkInsert = (
     key: string;
     value: Array<any>;
   }> = [];
-  payload.forEach((value) => {
+  payload.forEach((v) => {
     fields.forEach((field, index) => {
       data[index]
-        ? data[index]["value"].push(value[field])
+        ? data[index]["value"].push(v[field])
         : (data[index] = {
             key: field,
-            value: [value[field]],
+            value: [v[field]],
           });
     });
   });

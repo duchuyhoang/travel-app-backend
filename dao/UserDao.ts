@@ -5,7 +5,7 @@ import { AUTH_METHOD } from "@common/enum";
 interface SignUpPayload extends Omit<User, "id"> {}
 export class UserDao extends BaseDao {
   constructor(client: Client) {
-    super(client, "user");
+    super(client, "users");
     this.signUp = this.signUp.bind(this);
     this.getUserByEmailAndMethod = this.getUserByEmailAndMethod.bind(this);
   }

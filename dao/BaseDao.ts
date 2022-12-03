@@ -6,6 +6,22 @@ export type Key_And_Value = {
   key: string;
   value: any;
 };
+
+export enum WHERE_OPERATOR {
+  AND = "AND",
+  OR = "OR",
+}
+export interface BaseConfigs {
+  whereOperator?: WHERE_OPERATOR;
+}
+
+export type WhereConfig = Key_And_Value & {
+  operator?: WHERE_OPERATOR;
+  startRound?: boolean;
+  endRound?: boolean;
+};
+
+export interface SelectConfigs extends BaseConfigs {}
 export interface UpdateConfigs {
   remainFieldIfNull?: boolean;
 }
@@ -34,23 +50,29 @@ export abstract class BaseDao {
     return `${this.schema}.${this.tableName}`;
   }
 
-  public getAll(configs: {
+  public getAll(options: {
     fields?: Array<string>;
-    wheres?: Array<Key_And_Value>;
+    wheres?: Array<WhereConfig>;
   }) {
-    const { fields, wheres } = configs;
+    const { fields, wheres } = options;
     let index = 0;
     const values: Array<any> = [];
     const whereClause =
       !!!wheres || wheres.length === 0
         ? ""
         : `WHERE ${wheres
-            .map((v) => {
+            .map((v, i) => {
               index++;
               values.push(v.value);
-              return `${v.key}=$${index}`;
+              return `${v.startRound && wheres.length > 1 ? "(" : ""}${
+                v.key
+              }=$${index}${v.endRound && wheres.length > 1 ? ")" : ""} ${
+                i < wheres.length - 1 ? (v.operator ? v.operator : "AND") : ""
+              }`;
             })
-            .join(" AND ")}`;
+            .join(" ")}`;
+
+    console.log(whereClause);
 
     const query: QueryConfig = {
       text: `SELECT ${fields ? fields.join(",") : "*"} FROM ${
@@ -64,7 +86,7 @@ export abstract class BaseDao {
 
   public updateOne(
     updates: Array<Key_And_Value>,
-    wheres: Array<Key_And_Value>,
+    wheres: Array<WhereConfig>,
     configs?: UpdateConfigs
   ) {
     let index = 0;
@@ -86,12 +108,16 @@ export abstract class BaseDao {
       wheres.length === 0
         ? ""
         : `WHERE ${wheres
-            .map((v) => {
+            .map((v, i) => {
               index++;
               values.push(v.value);
-              return `${v.key}=$${index}`;
+              return `${v.startRound && wheres.length > 1 ? "(" : ""}${
+                v.key
+              }=$${index}${v.endRound && wheres.length > 1 ? ")" : ""} ${
+                i < wheres.length - 1 ? (v.operator ? v.operator : "AND") : ""
+              }`;
             })
-            .join(" AND ")}`;
+            .join(" ")}`;
     const query: QueryConfig = {
       text: `UPDATE ${this.getTableNameWithSchema()} SET ${queryFieldClause} ${whereClause} RETURNING *`,
       values,

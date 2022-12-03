@@ -1,4 +1,6 @@
 import { STATUS_CODE } from "@common/constants";
+import { DEL_FLAG } from "@common/enum";
+import { WHERE_OPERATOR } from "@daos/BaseDao";
 import { TagDao } from "@daos/TagDao";
 import { convertToBulkInsert, jsonResponse, pagination } from "@helpers/index";
 import { NextFunction, Request, Response } from "express";
@@ -24,7 +26,16 @@ const tagController = {
     const tagDao = new TagDao(client);
     const { limit, offset } = req.query;
     try {
-      const rs = await tagDao.getAll({});
+      const rs = await tagDao.getAll({
+        wheres: [
+          {
+            key: "del_flag",
+            value: DEL_FLAG.EXIST,
+            operator: WHERE_OPERATOR.AND,
+            // endRound: true,
+          },
+        ],
+      });
 
       return jsonResponse(res, "List tag", STATUS_CODE.SUCCESS, {
         ...pagination(

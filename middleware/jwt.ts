@@ -14,14 +14,22 @@ export const validateToken = (
     authorizationHeader[0] === "Bearer" && authorizationHeader[1]
       ? authorizationHeader[1]
       : null;
+  console.log(token);
+
   if (!token) {
-    jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
-    return;
+    return jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
   }
   jwt.verify(token, process.env.ACCESS_SECRET!, (error) => {
-    if (error) jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
+    if (error)
+      return jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
     else {
-      const info = jwt.decode(token);
+      const info: any = jwt.decode(token);
+      console.log(info?.exp, Date.now());
+
+      if (!info || info?.exp * 1000 < Date.now())
+        return jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
+      console.log(info);
+
       if (info) req.user = info as UserInfo;
       next();
     }

@@ -104,6 +104,23 @@ export const getTagSchema = yup.object().shape({
     }),
 });
 
+export const getPostSchema = yup.object().shape({
+	limit: yup
+	  .string()
+	  .nullable()
+	  .test("limit-valid", "Invalid limit", (v) => {
+		if (!v) return true;
+		return isInDesiredForm(v);
+	  }),
+	offset: yup
+	  .string()
+	  .nullable()
+	  .test("offset-valid", "Invalid offset", (v) => {
+		if (!v) return true;
+		return isInDesiredForm(v);
+	  }),
+  });
+
 export const deleteTagsSchema = yup.object().shape({
   tags: yup
     .array()
@@ -111,4 +128,15 @@ export const deleteTagsSchema = yup.object().shape({
     .test("valid ids", "Must not empty", (v) => {
       return !!v?.length;
     }),
+});
+
+export const insertPostSchema = yup.object().shape({
+  tags: yup
+    .array()
+    .typeError("Must be array of id")
+    .test("valid tags", "Must not empty", (v) => {
+      return !!v?.length;
+    }),
+  title: yup.string().required("Title required").max(255, "Title too long"),
+  content: yup.string().required("Content required"),
 });

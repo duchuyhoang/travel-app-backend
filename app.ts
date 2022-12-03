@@ -7,6 +7,7 @@ import client from "./common/connection";
 import userRouter from "@router/user";
 import mediaRouter from "@router/media";
 import tagRouter from "@router/tag";
+import postRouter from "@router/post";
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";
 import { DBError } from "@models/DBError";
@@ -36,6 +37,7 @@ const runServer = async () => {
     app.use("/user", userRouter);
     app.use("/media", mediaRouter);
     app.use("/tag", tagRouter);
+    app.use("/post", postRouter);
 
     app.get("/hello", (req, res) => {
       res.json({ mes: "xxx" });
