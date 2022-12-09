@@ -4,7 +4,7 @@ import { DBError } from "@models/DBError";
 import { NextFunction, Response, Request } from "express";
 import { DatabaseError } from "pg";
 import { inspect } from "util";
-
+import { parse } from "node-html-parser";
 var url = require("url");
 
 export const jsonResponse = (
@@ -132,4 +132,12 @@ export const pagination = (
 export function isInDesiredForm(str: any) {
   var n = Math.floor(Number(str));
   return n !== Infinity && String(n) === str && n >= 0;
+}
+
+export function getImageSrcFromHTML(html: string): Maybe<string> {
+  const root = parse(html);
+  const image = root.querySelector("img");
+  return (
+    image?.rawAttrs.replace("src=", "").replace(/(^\"+|\"+$)/gm, "") || null
+  );
 }

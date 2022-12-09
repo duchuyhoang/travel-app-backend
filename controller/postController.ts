@@ -6,6 +6,7 @@ import { PostDao } from "@daos/PostDao";
 import { DEL_FLAG, POST_STATUS } from "@common/enum";
 import {
   convertDataToUpdateQuery,
+  getImageSrcFromHTML,
   jsonResponse,
   pagination,
 } from "@helpers/index";
@@ -53,12 +54,14 @@ export const postController = {
     const postTagDao = new PostTagDao(client);
     const tagDao = new TagDao(client);
     const postDao = new PostDao(client);
+    const thumbnail = getImageSrcFromHTML(postPayload.content);
 
     try {
       await client.query("BEGIN");
       const { rows } = await postDao.insertOne({
         ...postPayload,
         slug,
+        thumbnail: thumbnail,
         del_flag: DEL_FLAG.EXIST,
         status: POST_STATUS.UNAPPROVED,
         author_id: user?.id,
@@ -80,7 +83,6 @@ export const postController = {
                 operator: WHERE_OPERATOR.OR,
               })),
             });
-      console.log(postTags);
 
       await client.query("COMMIT");
       return jsonResponse(res, "Ok", STATUS_CODE.CREATED, {
@@ -99,18 +101,22 @@ export const postController = {
     const { tags, ...postPayload }: IPostPayload = req.body;
     const postDao = new PostDao(client);
     const postTagDao = new PostTagDao(client);
+    const thumbnail = getImageSrcFromHTML(postPayload.content);
 
     try {
+      await client.query("BEGIN");
       const result = await postDao.updateOne(
-        convertDataToUpdateQuery({ ...postPayload }),
+        convertDataToUpdateQuery({ ...postPayload, thumbnail }),
         [{ key: "id_post", value: id_post }]
       );
       const tagUpdateResult = await postTagDao.updatePostTagsPost(
         id_post as string,
         tags
       );
+      await client.query("COMMIT");
       return jsonResponse(res, "Update succeed", STATUS_CODE.SUCCESS, {});
     } catch (e: any) {
+      await client.query("ROLLBACK");
       console.log(e);
 
       return jsonResponse(res, "Update failed", STATUS_CODE.BAD_REQUEST, e);
