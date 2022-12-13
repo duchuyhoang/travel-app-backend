@@ -145,4 +145,24 @@ export const postController = {
       return jsonResponse(res, "Delete failed", STATUS_CODE.BAD_REQUEST, e);
     }
   },
+  searchPost: async (req: Request, res: Response, next: NextFunction) => {
+    const client: Client = req.client;
+    const postDao = new PostDao(client);
+    try {
+      const { limit, offset, search } = req.query;
+
+      const { rows } = await postDao.searchByString(search as string);
+      return jsonResponse(res, "Succeed", STATUS_CODE.SUCCESS, {
+        data: pagination(
+          rows,
+          parseInt(limit as string),
+          parseInt(offset as string)
+        ),
+      });
+    } catch (e: any) {
+      console.log(e);
+
+      return jsonResponse(res, "Failed", STATUS_CODE.BAD_REQUEST, e);
+    }
+  },
 };

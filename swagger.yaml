@@ -501,6 +501,65 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
+  /post/search:
+    get:
+      tags:
+        - post
+      summary: Get posts
+
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: search
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Post"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
   /tag/:
     get:
       tags:

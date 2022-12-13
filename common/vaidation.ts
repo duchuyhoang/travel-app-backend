@@ -105,21 +105,21 @@ export const getTagSchema = yup.object().shape({
 });
 
 export const getPostSchema = yup.object().shape({
-	limit: yup
-	  .string()
-	  .nullable()
-	  .test("limit-valid", "Invalid limit", (v) => {
-		if (!v) return true;
-		return isInDesiredForm(v);
-	  }),
-	offset: yup
-	  .string()
-	  .nullable()
-	  .test("offset-valid", "Invalid offset", (v) => {
-		if (!v) return true;
-		return isInDesiredForm(v);
-	  }),
-  });
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+});
 
 export const deleteTagsSchema = yup.object().shape({
   tags: yup
@@ -139,4 +139,22 @@ export const insertPostSchema = yup.object().shape({
     }),
   title: yup.string().required("Title required").max(255, "Title too long"),
   content: yup.string().required("Content required"),
+});
+
+export const searchPostSchema = yup.object().shape({
+  search: yup.string().required("Search required"),
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
 });
