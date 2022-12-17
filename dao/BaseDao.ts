@@ -124,11 +124,18 @@ export abstract class BaseDao {
     };
     return this.client.query(query);
   }
-  public insertOne(payload: { [key: string]: any }) {
+  public insertOne(
+    payload: { [key: string]: any },
+    options?: {
+      onConflictQuery?: string;
+    }
+  ) {
     const fields = Object.keys(payload);
     const text = `INSERT INTO ${this.getTableNameWithSchema()}${this.generateInsertListField(
       fields
-    )} ${this.generateSinglePlaceholder(fields.length)} RETURNING *`;
+    )} ${this.generateSinglePlaceholder(fields.length)} ${
+      options?.onConflictQuery || ""
+    } RETURNING *`;
     return this.client.query(
       text,
       fields.map((key) => payload[key])

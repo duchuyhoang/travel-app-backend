@@ -60,7 +60,7 @@ const tagController = {
         convertToBulkInsert(tags, ["tag_name", "tag_description"]),
         {
           onConflictQuery:
-            " ON CONFLICT (tag_name) DO  UPDATE SET tag_description = excluded.tag_description",
+            " ON CONFLICT (tag_name) DO UPDATE SET tag_description = excluded.tag_description",
         }
       );
       return jsonResponse(res, "Add tags succeed", STATUS_CODE.SUCCESS, {

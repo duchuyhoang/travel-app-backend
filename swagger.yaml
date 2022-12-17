@@ -560,6 +560,160 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
+  /post/updateReaction:
+    post:
+      tags:
+        - post
+      summary: Update post reaction
+
+      requestBody:
+        description: Update post reaction payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_post:
+                  type: string
+                  description: Post id
+                reaction_type:
+                  type: string
+                  description: Reaction
+                  enum:
+                    - LIKE
+                    - ANGRY
+                    - SAD
+                    - WOW
+                    - LAUGH
+                    - HEART
+                status:
+                  type: string
+                  description: Turn on or off
+
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    $ref: "#components/schemas/Post"
+
+        "400":
+          description: Edit post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    patch:
+      tags:
+        - post
+      summary: Edit post
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Edit post
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  description: List tags
+                  items:
+                    type: string
+                content:
+                  type: string
+                  description: Post content(HTML)
+                title:
+                  type: string
+                  description: Post title
+      responses:
+        "200":
+          description: Edit post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Succeed
+
+        "400":
+          description: Edit post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    delete:
+      tags:
+        - post
+      summary: Delete post by id
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        "400":
+          description: Delete post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
   /tag/:
     get:
       tags:
@@ -764,6 +918,22 @@ components:
           type: number
           example: 1
 
+    Reaction:
+      type: object
+      properties:
+        likes:
+          type: number
+        angries:
+          type: number
+        sads:
+          type: number
+        wows:
+          type: number
+        laughs:
+          type: number
+        hearts:
+          type: number
+
     Post:
       type: object
       properties:
@@ -784,6 +954,9 @@ components:
           type: number
         status:
           type: string
+        reactions:
+          type: object
+          $ref: "#components/schemas/Reaction"
 
     Metadata:
       type: object

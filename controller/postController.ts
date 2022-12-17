@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { IPostPayload, Post, DBPost } from "@models/Post";
 import { PostTagDao } from "@daos/PostTagDao";
 import { PostDao } from "@daos/PostDao";
-import { DEL_FLAG, POST_STATUS } from "@common/enum";
+import { DEL_FLAG, POST_STATUS, REACTION_TYPE } from "@common/enum";
 import {
   convertDataToUpdateQuery,
   getImageSrcFromHTML,
@@ -14,6 +14,7 @@ import { STATUS_CODE } from "@common/constants";
 import { DBError } from "@models/DBError";
 import { TagDao } from "@daos/TagDao";
 import { WHERE_OPERATOR } from "@daos/BaseDao";
+import { PostReactionDao } from "@daos/PostReactionDao";
 
 export const postController = {
   getPost: async (req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +39,12 @@ export const postController = {
     const postDao = new PostDao(client);
     const { id_post } = req.params;
     try {
+      const increaseViewRs = await postDao.increaseView(id_post);
+      if (increaseViewRs.rowCount < 1) {
+        return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
+          data: null,
+        });
+      }
       const rs = await postDao.getById(id_post);
       return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
         data: rs.rows[0] || null,
@@ -163,6 +170,32 @@ export const postController = {
       console.log(e);
 
       return jsonResponse(res, "Failed", STATUS_CODE.BAD_REQUEST, e);
+    }
+  },
+  updatePostReaction: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const client: Client = req.client;
+    const { id_post, reaction_type, status } = req.body;
+    const user = req.user;
+    const postReactionDao = new PostReactionDao(client);
+    if (!user?.id) {
+      return jsonResponse(res, "Bad request", 400);
+    }
+    try {
+      const rs = await postReactionDao.updatePostReaction(
+        id_post,
+        reaction_type as REACTION_TYPE,
+        user?.id.toString(),
+        parseInt(status)
+      );
+      return jsonResponse(res, "Succeed", 200);
+    } catch (e) {
+      console.log(e);
+
+      return jsonResponse(res, "Bad request", 400);
     }
   },
 };

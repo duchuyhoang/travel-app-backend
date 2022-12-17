@@ -6,6 +6,7 @@ import {
   getPostSchema,
   insertPostSchema,
   searchPostSchema,
+  updatePostReactionSchema,
 } from "@common/vaidation";
 
 const postRouter: Router = express.Router();
@@ -31,7 +32,25 @@ postRouter.get(
   postController.searchPost
 );
 
-postRouter.get("/:id_post", validateToken, postController.getById);
+postRouter.post(
+  "/updateReaction",
+  validateToken,
+  validate(updatePostReactionSchema, ["body"]),
+  postController.updatePostReaction
+);
+
+postRouter.get(
+  "/",
+  validateToken,
+  validate(getPostSchema, ["query"]),
+  postController.getPost
+);
+
+postRouter.get(
+  "/:id_post",
+  // validateToken,
+  postController.getById
+);
 
 postRouter.patch(
   "/:id_post",

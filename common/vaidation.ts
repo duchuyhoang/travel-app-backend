@@ -2,7 +2,7 @@ import { EMAIL_REGEX, MAX_FILE_SIZE, MOBILE_REGEX } from "@common/constants";
 import { isInDesiredForm } from "@helpers/index";
 import { isImage } from "@middleware/file";
 import * as yup from "yup";
-import { AUTH_METHOD } from "./enum";
+import { AUTH_METHOD, DEL_FLAG, REACTION_TYPE } from "./enum";
 
 const multipleFileValidation = yup
   .array()
@@ -156,5 +156,25 @@ export const searchPostSchema = yup.object().shape({
     .test("offset-valid", "Invalid offset", (v) => {
       if (!v) return true;
       return isInDesiredForm(v);
+    }),
+});
+
+export const updatePostReactionSchema = yup.object().shape({
+  id_post: yup.string(),
+  reaction_type: yup
+    .string()
+    .typeError("Must be a valid reaction")
+    .test("valid react type", "Must be a valid reaction", (v) => {
+      return Object.values(REACTION_TYPE).some(
+        (value) => value.toString() === v
+      );
+    }),
+  status: yup
+    .string()
+    .typeError("Must be a valid status")
+    .test("valid status", "Must be a valid status", (v) => {
+      return Object.values(DEL_FLAG).some(
+        (value) => value.toString() === v?.toString()
+      );
     }),
 });

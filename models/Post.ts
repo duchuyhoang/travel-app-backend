@@ -9,6 +9,15 @@ export interface Post {
   create_at: Date;
   del_flag: DEL_FLAG;
   status: POST_STATUS;
+  view: number;
+  reactions: {
+    likes: number;
+    angries: number;
+    sads: number;
+    wows: number;
+    laughs: number;
+    hearts: number;
+  };
 }
 export type DBPost = Omit<Post, "author"> & {
   author: string;
@@ -16,7 +25,14 @@ export type DBPost = Omit<Post, "author"> & {
 
 export type IPostPayload = Omit<
   Post,
-  "id_post" | "create_at" | "del_flag" | "status" | "author" | "slug"
+  | "id_post"
+  | "create_at"
+  | "del_flag"
+  | "status"
+  | "author"
+  | "slug"
+  | "view"
+  | "reactions"
 > & {
   tags: Array<string>;
 };
