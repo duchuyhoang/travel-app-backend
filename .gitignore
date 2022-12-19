@@ -1,2 +1,6 @@
 node_modules
 uploads
+build
+db
+db_data
+.env*

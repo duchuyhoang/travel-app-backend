@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    container_name: travel-app-db
+    image: postgres
+    networks:
+      - travel-app-network
+    ports:
+      - "5999:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+      - ./db_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envDb
+    
+  travel-app-backend:
+    container_name: travel-app-backend
+    networks:
+      - travel-app-network
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    image: travel-app-backend
+    depends_on:
+      - db
+    ports:
+      - "3002:3002"
+    # network_mode: ""
+
+networks:
+  travel-app-network:
+    driver: bridge
+

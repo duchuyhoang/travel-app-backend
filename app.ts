@@ -1,9 +1,20 @@
-import express, { Express, Request, Response, NextFunction } from "express";
+import moduleAlias from "module-alias";
 import dotenv from "dotenv";
 import path from "path";
+
+if (process.env.NODE_ENV === "DEVELOPMENT") {
+  dotenv.config({
+    path: path.join(__dirname, ".env.development"),
+  });
+} else {
+  dotenv.config();
+  moduleAlias();
+}
+
+import express, { Express, Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import client from "./common/connection";
+
 import userRouter from "@router/user";
 import mediaRouter from "@router/media";
 import tagRouter from "@router/tag";
@@ -16,7 +27,8 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 import swaggerUi from "swagger-ui-express";
 import { MulterError } from "multer";
 import { UPLOAD_FOLDER } from "@common/constants";
-dotenv.config();
+
+import client from "./common/connection";
 
 const runServer = async () => {
   const port = process.env.PORT || 3002;
