@@ -141,3 +141,12 @@ export function getImageSrcFromHTML(html: string): Maybe<string> {
     image?.rawAttrs.replace("src=", "").replace(/(^\"+|\"+$)/gm, "") || null
   );
 }
+
+export const wrapperAsync = async (asyncFunc: Promise<any>) => {
+  try {
+    const rs = await asyncFunc;
+    return [rs, null];
+  } catch (e) {
+    return [null, e];
+  }
+};

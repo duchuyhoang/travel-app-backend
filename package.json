@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "export NODE_ENV=DEVELOPMENT && nodemon app.ts",
+    "start": "export REDIS_PORT=6379 && concurrently \"redis-server --port ${REDIS_PORT}\" \"export NODE_ENV=DEVELOPMENT && nodemon app.ts\"",
     "build": "tsc --build",
-    "start:prod": "export NODE_ENV=PRODUCTION && node build/app.js"
+    "start:prod": "export NODE_ENV=PRODUCTION REDIS_PORT=6379 && node build/app.js"
   },
   "_moduleAliases": {
     "@root": "./build",
@@ -27,6 +27,7 @@
     "@types/pg": "^8.6.5",
     "axios": "^1.1.3",
     "body-parser": "^1.20.1",
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -36,6 +37,7 @@
     "node-html-parser": "^6.1.4",
     "pg": "^8.8.0",
     "pg-promise": "^10.12.1",
+    "redis": "^4.5.1",
     "swagger-ui-express": "^4.6.0",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.3",

@@ -19,4 +19,6 @@ export const DB_ERROR_MESSAGES: {
 };
 
 export const MAX_FILE_SIZE = 5 * 1000000;
-export const UPLOAD_FOLDER = "uploads"
+export const UPLOAD_FOLDER = "uploads";
+
+export const POST_PREFIX = "post_";

@@ -41,7 +41,7 @@ postRouter.post(
 
 postRouter.get(
   "/",
-  validateToken,
+  // validateToken,
   validate(getPostSchema, ["query"]),
   postController.getPost
 );
@@ -54,7 +54,7 @@ postRouter.get(
 
 postRouter.patch(
   "/:id_post",
-  validateToken,
+  // validateToken,
   validate(insertPostSchema, ["body"]),
   postController.updatePost
 );

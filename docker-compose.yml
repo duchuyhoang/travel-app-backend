@@ -12,17 +12,26 @@ services:
       - ./db_data:/var/lib/postgresql/data
     env_file:
       - ./.envDb
-    
+
+  cache:
+    container_name: travel-app-cache
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - travel-app-network
+
   travel-app-backend:
     container_name: travel-app-backend
     networks:
       - travel-app-network
-    build: 
+    build:
       context: ./
       dockerfile: Dockerfile
     image: travel-app-backend
     depends_on:
       - db
+      - cache
     ports:
       - "3002:3002"
     # network_mode: ""
@@ -30,4 +39,3 @@ services:
 networks:
   travel-app-network:
     driver: bridge
-

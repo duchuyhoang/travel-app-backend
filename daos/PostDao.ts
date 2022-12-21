@@ -140,7 +140,7 @@ GROUP BY
   }
   public async increaseView(id_post: string) {
     return this.getClient().query(
-      `UPDATE posts SET view = view + 1 WHERE id_post = ${id_post} AND del_flag=${DEL_FLAG.EXIST}`
+      `UPDATE posts SET view = view + 1 WHERE id_post = ${id_post} AND del_flag=${DEL_FLAG.EXIST} RETURNING view`
     );
   }
 

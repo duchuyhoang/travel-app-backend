@@ -29,12 +29,14 @@ import { MulterError } from "multer";
 import { UPLOAD_FOLDER } from "@common/constants";
 
 import client from "./common/connection";
+import redisClient from "./common/redisConnection";
 
 const runServer = async () => {
   const port = process.env.PORT || 3002;
 
   const app: Express = express();
   await client.connect();
+  await redisClient.connect();
   try {
     app.use(express.static(path.join(__dirname, "assets")));
     app.use(`/${UPLOAD_FOLDER}`, express.static(UPLOAD_FOLDER));
@@ -44,6 +46,7 @@ const runServer = async () => {
     app.use(morgan("combined"));
     app.use((req, res, next) => {
       req.client = client;
+      req.redisClient = redisClient;
       next();
     });
     app.use("/user", userRouter);
