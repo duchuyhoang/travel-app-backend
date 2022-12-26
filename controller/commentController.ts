@@ -2,9 +2,9 @@ import { Client, DatabaseError, QueryResult } from "pg";
 import { NextFunction, Request, Response } from "express";
 import { jsonResponse, pagination, throwDBError } from "@helpers/index";
 import { PostComment, CreatePostCommentPayload } from "@models/PostComment";
-import { STATUS_CODE } from "common/constants";
-import { PostCommentDao } from "daos/PostCommentDao";
-import { DEL_FLAG } from "common/enum";
+import { STATUS_CODE } from "@common/constants";
+import { PostCommentDao } from "@daos/PostCommentDao";
+import { DEL_FLAG } from "@common/enum";
 const commentController = {
   getByPost: async (req: Request, res: Response, next: NextFunction) => {
     const client: Client = req.client;

@@ -1,4 +1,4 @@
-import commentController from "controller/commentController";
+import commentController from "@controller/commentController";
 import express, { Router } from "express";
 import {
   createPostCommentSchema,

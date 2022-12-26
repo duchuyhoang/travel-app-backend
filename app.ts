@@ -19,7 +19,7 @@ import userRouter from "@router/user";
 import mediaRouter from "@router/media";
 import tagRouter from "@router/tag";
 import postRouter from "@router/post";
-import commentRouter from "router/post_comment";
+import commentRouter from "@router/post_comment";
 
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";

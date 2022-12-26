@@ -1,4 +1,4 @@
-import { DEL_FLAG } from "common/enum";
+import { DEL_FLAG } from "@common/enum";
 import { Client, QueryConfig } from "pg";
 import { BaseDao } from "./BaseDao";
 export class PostCommentDao extends BaseDao {
