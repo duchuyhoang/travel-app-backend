@@ -160,7 +160,7 @@ export const searchPostSchema = yup.object().shape({
 });
 
 export const updatePostReactionSchema = yup.object().shape({
-  id_post: yup.string(),
+  id_post: yup.string().required("Id post required"),
   reaction_type: yup
     .string()
     .typeError("Must be a valid reaction")
@@ -176,5 +176,37 @@ export const updatePostReactionSchema = yup.object().shape({
       return Object.values(DEL_FLAG).some(
         (value) => value.toString() === v?.toString()
       );
+    }),
+});
+
+export const createPostCommentSchema = yup.object().shape({
+  id_post: yup.string().required("Id post required"),
+  content: yup.string().required("content required"),
+});
+
+export const editPostCommentSchema = yup.object().shape({
+  id_comment: yup.string().required("Id comment required"),
+  content: yup.string().required("content required"),
+});
+
+export const deletePostCommentSchema = yup.object().shape({
+  id_comment: yup.string().required("Id comment required"),
+});
+
+export const getPostCommentSchema = yup.object().shape({
+  id_post: yup.string().required("Id post required"),
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
     }),
 });

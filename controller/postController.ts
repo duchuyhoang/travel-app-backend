@@ -195,7 +195,6 @@ export const postController = {
     const postDao = new PostDao(client);
     try {
       const { limit, offset, search, tags } = req.query;
-      console.log(req.query);
 
       const { rows } = await postDao.searchByStringAndTags(
         search as string,

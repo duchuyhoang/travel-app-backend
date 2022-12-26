@@ -7,3 +7,8 @@ export interface PostComment {
   id_user: string;
   del_flag: DEL_FLAG;
 }
+
+export type CreatePostCommentPayload = Pick<
+  PostComment,
+  "id_post" | "content"
+> & {};

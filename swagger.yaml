@@ -15,6 +15,8 @@ tags:
     description: "Tags router"
   - name: post
     description: "Post router"
+  - name: comment
+    description: "Comment router"
 
 paths:
   /user/signUp:
@@ -719,6 +721,226 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
+  /comment:
+    get:
+      tags:
+        - comment
+      summary: Get comment by post
+
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          required: true  
+          name: id_post
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Get list comment succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Comment"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Get list comment failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    post:
+      tags:
+        - comment
+      summary: Add comment to post
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        description: Add comment body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_post:
+                  type: string
+                content:
+                  type: string
+      
+      responses:
+        "200":
+          description: Create comment succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Comment"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Add comment failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    patch:
+      tags:
+        - comment
+      summary: Edit comment
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        description: Edit comment body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_comment:
+                  required: true
+                  type: string
+                content:
+                  required: true
+                  type: string
+      
+      responses:
+        "200":
+          description: Edit comment succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Comment"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Edit comment failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+    delete:
+      tags:
+        - comment
+      summary: Delete comment
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        description: Delete comment body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_comment:
+                  required: true
+                  type: string
+      
+      responses:
+        "200":
+          description: Delete comment succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Comment"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Delete comment failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+
   /tag/:
     get:
       tags:
@@ -963,6 +1185,25 @@ components:
           type: object
           $ref: "#components/schemas/Reaction"
 
+    Comment:
+      type: object
+      properties:
+        id_comment:
+          type: string
+        user_info:
+          type: object
+          $ref: "#components/schemas/User"
+        id_post:
+          type: string
+        content:
+          type: string
+        del_flag:
+          type: string
+        create_at:
+          type: date
+        del_flag:
+          type: number
+        
     Metadata:
       type: object
       properties:
