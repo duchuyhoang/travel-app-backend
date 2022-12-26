@@ -523,9 +523,14 @@ paths:
             type: integer
         - in: query
           name: search
-          required: true
           schema:
             type: string
+        - in: query
+          name: tags
+          description: List tags ID seperate by comma
+          schema:
+            type: string
+            example: 3,5
 
       responses:
         "200":

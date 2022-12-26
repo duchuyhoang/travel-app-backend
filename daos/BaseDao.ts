@@ -72,8 +72,6 @@ export abstract class BaseDao {
             })
             .join(" ")}`;
 
-    console.log(whereClause);
-
     const query: QueryConfig = {
       text: `SELECT ${fields ? fields.join(",") : "*"} FROM ${
         this.tableName

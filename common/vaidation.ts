@@ -142,7 +142,7 @@ export const insertPostSchema = yup.object().shape({
 });
 
 export const searchPostSchema = yup.object().shape({
-  search: yup.string().required("Search required"),
+  // search: yup.string().required("Search required"),
   limit: yup
     .string()
     .nullable()
