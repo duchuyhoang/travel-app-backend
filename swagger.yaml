@@ -17,6 +17,8 @@ tags:
     description: "Post router"
   - name: comment
     description: "Comment router"
+  - name: mail
+    description: "Mail router"
 
 paths:
   /user/signUp:
@@ -1084,6 +1086,70 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
+
+  /mail/send-verify-mail:
+    post:
+      tags:
+        - mail
+      summary: Send verify mail
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Sent success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Created
+        "400":
+          description: Other error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#components/schemas/ValidationError"
+                  - $ref: "#components/schemas/UnexpectedError"
+
+  /mail/verify-email:
+    post:
+      tags:
+        - mail
+      summary: Verify account
+      requestBody:
+        description: Token received from mail
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token sent from mail
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Verify success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Verify success
+        "400":
+          description: Other error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#components/schemas/ValidationError"
+                  - $ref: "#components/schemas/UnexpectedError"
 
 components:
   schemas:

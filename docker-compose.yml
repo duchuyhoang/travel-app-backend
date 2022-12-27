@@ -36,6 +36,17 @@ services:
       - "3002:3002"
     # network_mode: ""
 
+  commander:
+    container_name: travel-app-redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOST=travel-app-cache
+    ports:
+      - "8081:8081"
+    networks:
+      - travel-app-network
+
 networks:
   travel-app-network:
     driver: bridge

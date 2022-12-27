@@ -21,4 +21,6 @@ export const DB_ERROR_MESSAGES: {
 export const MAX_FILE_SIZE = 5 * 1000000;
 export const UPLOAD_FOLDER = "uploads";
 
-export const POST_PREFIX = "post_";
+export const POST_PREFIX = "post:";
+
+export const VERIFY_USER_PREFIX = "user_verify_token:";

@@ -15,6 +15,7 @@ export interface User extends UserInfo {
   password_hash: string;
   method: AUTH_METHOD;
   salt: string;
+  is_verified: boolean;
 }
 
 export type CreateUserPayload = Pick<

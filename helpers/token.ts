@@ -8,8 +8,16 @@ export const signToken = (
   const tokenExpireTime =
     Date.now() + parseInt(process.env.TOKEN_EXPIRE_TIME as string);
 
-  return jwt.sign({ ...data, tokenExpireTime }, secret || process.env.ACCESS_SECRET!, {
-    expiresIn: parseInt(process.env.TOKEN_EXPIRE_TIME as string) || 3600000,
-    ...options,
-  });
+  return jwt.sign(
+    { ...data, tokenExpireTime },
+    secret || process.env.ACCESS_SECRET!,
+    {
+      expiresIn: parseInt(process.env.TOKEN_EXPIRE_TIME as string) || 3600000,
+      ...options,
+    }
+  );
+};
+
+export const decodeJWT = (token: string) => {
+  return jwt.decode(token);
 };

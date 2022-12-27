@@ -24,7 +24,6 @@ export const validateToken = (
       return jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});
     else {
       const info: any = jwt.decode(token);
-      console.log(info?.exp, Date.now());
 
       if (!info || info?.exp * 1000 < Date.now())
         return jsonResponse(res, "Unauthorized", STATUS_CODE.UNAUTHORIZED, {});

@@ -210,3 +210,7 @@ export const getPostCommentSchema = yup.object().shape({
       return isInDesiredForm(v);
     }),
 });
+
+export const verifyEmailSchema = yup.object().shape({
+  token: yup.string().required("Token required"),
+});

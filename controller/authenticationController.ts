@@ -1,13 +1,14 @@
 import { Client, DatabaseError, QueryResult } from "pg";
 import cryto from "crypto";
 import { NextFunction, Request, Response } from "express";
-import { STATUS_CODE } from "@common/constants";
+import { STATUS_CODE, VERIFY_USER_PREFIX } from "@common/constants";
 import {
   jsonResponse,
   throwDBError,
   log,
   convertDataToUpdateQuery,
   getFileName,
+  wrapperAsync,
 } from "@helpers/index";
 import {
   CreateUserPayload,
@@ -20,6 +21,7 @@ import { AUTH_METHOD, PERMISSION } from "@common/enum";
 import { DBError } from "@models/DBError";
 import { getUserSocialInfo, SocialData } from "@services/socialLogin";
 import { signToken } from "@helpers/token";
+import MailService from "@services/mail";
 
 const authenticationController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +62,7 @@ const authenticationController = {
   },
   signUp: async (req: Request, res: Response, next: NextFunction) => {
     const client: Client = req.client;
+    const redisClient = req.redisClient;
     const userDao = new UserDao(client);
     const {
       email,
@@ -68,6 +71,7 @@ const authenticationController = {
       mobile = null,
       name,
     } = req.body as CreateUserPayload;
+    const mailService = new MailService();
     const avatar = req.file ? getFileName(req.file) : null;
 
     const salt = cryto.randomBytes(16).toString("hex");
@@ -86,7 +90,40 @@ const authenticationController = {
         permission: PERMISSION.USER,
         method: AUTH_METHOD.PASSWORD,
         salt,
+        is_verified: false,
       });
+
+      const insertedUser = result.rows[0];
+      const mailVerifyToken = signToken(
+        {
+          id: insertedUser.id,
+        },
+        process.env.MAIL_SECRET,
+        {
+          expiresIn: parseInt(process.env.MAIL_EXPIRE_TIME as string),
+        }
+      );
+      const [rs, error] = await wrapperAsync(
+        redisClient.set(
+          `${VERIFY_USER_PREFIX}${insertedUser.id}`,
+          mailVerifyToken,
+          {
+            PX: parseInt(process.env.MAIL_EXPIRE_TIME!),
+          }
+        )
+      );
+
+      if (rs) {
+        const [_, err] = await wrapperAsync(
+          mailService.sendHTMLMail({
+            from: process.env.MAIL_USER!,
+            subject: "Please verify your mail",
+            to: [email],
+            html: `${process.env.CLIENT_HOST!}/${mailVerifyToken}`,
+          })
+        );
+      }
+
       jsonResponse(res, "Created", STATUS_CODE.CREATED, {});
     } catch (e) {
       throwDBError(e as DatabaseError, next);
