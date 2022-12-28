@@ -20,7 +20,7 @@ postRouter.post(
 
 postRouter.get(
   "/",
-  validateToken,
+  // validateToken,
   validate(getPostSchema, ["query"]),
   postController.getPost
 );
@@ -41,20 +41,18 @@ postRouter.post(
 
 postRouter.get(
   "/",
-  // validateToken,
   validate(getPostSchema, ["query"]),
   postController.getPost
 );
 
 postRouter.get(
   "/:id_post",
-  // validateToken,
   postController.getById
 );
 
 postRouter.patch(
   "/:id_post",
-  // validateToken,
+  validateToken,
   validate(insertPostSchema, ["body"]),
   postController.updatePost
 );
