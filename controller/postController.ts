@@ -93,6 +93,7 @@ export const postController = {
         del_flag: DEL_FLAG.EXIST,
         status: POST_STATUS.UNAPPROVED,
         author_id: user?.id,
+        create_at: new Date().toISOString(),
       });
       const post: DBPost = rows[0];
       if (!post) throw new DBError("Insert failed", []);
