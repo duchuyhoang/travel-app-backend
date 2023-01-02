@@ -194,11 +194,12 @@ export const postController = {
     const client: Client = req.client;
     const postDao = new PostDao(client);
     try {
-      const { limit, offset, search, tags } = req.query;
+      const { limit, offset, search, tags, authorId } = req.query;
 
       const { rows } = await postDao.searchByStringAndTags(
         search as string,
-        tags ? tags.toString().split(",") : []
+        tags ? tags.toString().split(",") : [],
+        authorId as string
       );
       return jsonResponse(res, "Succeed", STATUS_CODE.SUCCESS, {
         data: pagination(
