@@ -26,5 +26,9 @@ export enum REACTION_TYPE {
   SAD = "SAD",
   WOW = "WOW",
   LAUGH = "LAUGH",
-  HEART = "HEART"
+  HEART = "HEART",
+}
+export enum ORDER_BY {
+  CREATE_AT = "CREATE_AT",
+  VIEW = "VIEW",
 }

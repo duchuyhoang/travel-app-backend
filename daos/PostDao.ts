@@ -1,4 +1,4 @@
-import { DEL_FLAG } from "@common/enum";
+import { DEL_FLAG, ORDER_BY } from "@common/enum";
 import { Client, QueryConfig } from "pg";
 import { BaseDao } from "./BaseDao";
 
@@ -6,7 +6,7 @@ export class PostDao extends BaseDao {
   constructor(client: Client) {
     super(client, "posts");
   }
-  public async getAllPosts() {
+  public async getAllPosts(orderBy?: ORDER_BY) {
     return this.getClient().query(`SELECT * FROM (
       SELECT
         posts.*,
@@ -90,7 +90,11 @@ export class PostDao extends BaseDao {
         posts.id_post,
         users.id
     ) as results 
-    ORDER BY results.view DESC,
+    ORDER BY ${
+      orderBy === ORDER_BY.CREATE_AT
+        ? `CASE WHEN results.create_at IS NULL THEN 1 ELSE 0 END`
+        : `results.view DESC`
+    },
     CAST(results.reactions->>'likes' AS bigint) DESC;`);
   }
   public async getById(id_post: string) {

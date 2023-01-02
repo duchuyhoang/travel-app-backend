@@ -282,12 +282,22 @@ paths:
       parameters:
         - in: query
           name: limit
+          required: true
           schema:
             type: integer
         - in: query
           name: offset
+          required: true
           schema:
             type: integer
+        - in: query
+          name: Order by
+          example: VIEW
+          schema:
+            type: string
+            enum: 
+              - VIEW
+              - CREATE_AT
 
       responses:
         "200":

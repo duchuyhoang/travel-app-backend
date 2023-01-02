@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { IPostPayload, Post, DBPost } from "@models/Post";
 import { PostTagDao } from "@daos/PostTagDao";
 import { PostDao } from "@daos/PostDao";
-import { DEL_FLAG, POST_STATUS, REACTION_TYPE } from "@common/enum";
+import { DEL_FLAG, ORDER_BY, POST_STATUS, REACTION_TYPE } from "@common/enum";
 import {
   convertDataToUpdateQuery,
   getImageSrcFromHTML,
@@ -22,9 +22,11 @@ export const postController = {
   getPost: async (req: Request, res: Response, next: NextFunction) => {
     const client: Client = req.client;
     const postDao = new PostDao(client);
-    const { limit, offset } = req.query;
+    const { limit, offset, orderBy } = req.query;
+    console.log(limit, orderBy);
+
     try {
-      const rs = await postDao.getAllPosts();
+      const rs = await postDao.getAllPosts(orderBy as ORDER_BY);
       return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
         ...pagination(
           rs.rows,
