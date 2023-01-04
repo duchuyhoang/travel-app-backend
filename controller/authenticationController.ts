@@ -122,6 +122,7 @@ const authenticationController = {
             html: `${process.env.CLIENT_HOST!}/${mailVerifyToken}`,
           })
         );
+        console.log("err send mail", err);
       }
 
       jsonResponse(res, "Created", STATUS_CODE.CREATED, {});
