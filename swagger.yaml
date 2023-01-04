@@ -291,13 +291,14 @@ paths:
           schema:
             type: integer
         - in: query
-          name: Order by
+          name: orderBy
           example: VIEW
           schema:
             type: string
             enum: 
               - VIEW
               - CREATE_AT
+          description: Get post order by view or by create at
 
       responses:
         "200":
