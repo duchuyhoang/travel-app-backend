@@ -21,6 +21,7 @@ import tagRouter from "@router/tag";
 import postRouter from "@router/post";
 import commentRouter from "@router/post_comment";
 import mailRouter from "@router/mail";
+import adminRouter from "@router/admin";
 
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";
@@ -58,6 +59,7 @@ const runServer = async () => {
     app.use("/post", postRouter);
     app.use("/comment", commentRouter);
     app.use("/mail", mailRouter);
+    app.use("/admin", adminRouter);
 
     app.get("/hello", (req, res) => {
       res.json({ mes: "xxx" });

@@ -19,6 +19,7 @@ export type WhereConfig = Key_And_Value & {
   operator?: WHERE_OPERATOR;
   startRound?: boolean;
   endRound?: boolean;
+  notEqual?: boolean;
 };
 
 export interface SelectConfigs extends BaseConfigs {}
@@ -64,9 +65,9 @@ export abstract class BaseDao {
             .map((v, i) => {
               index++;
               values.push(v.value);
-              return `${v.startRound && wheres.length > 1 ? "(" : ""}${
-                v.key
-              }=$${index}${v.endRound && wheres.length > 1 ? ")" : ""} ${
+              return `${v.startRound && wheres.length > 1 ? "(" : ""}${v.key}${
+                !v.notEqual ? "=" : "<>"
+              }$${index}${v.endRound && wheres.length > 1 ? ")" : ""} ${
                 i < wheres.length - 1 ? (v.operator ? v.operator : "AND") : ""
               }`;
             })

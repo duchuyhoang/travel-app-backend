@@ -2,7 +2,7 @@ import { EMAIL_REGEX, MAX_FILE_SIZE, MOBILE_REGEX } from "@common/constants";
 import { isInDesiredForm } from "@helpers/index";
 import { isImage } from "@middleware/file";
 import * as yup from "yup";
-import { AUTH_METHOD, DEL_FLAG, REACTION_TYPE } from "./enum";
+import { AUTH_METHOD, DEL_FLAG, POST_STATUS, REACTION_TYPE } from "./enum";
 
 const multipleFileValidation = yup
   .array()
@@ -119,6 +119,36 @@ export const getPostSchema = yup.object().shape({
       if (!v) return true;
       return isInDesiredForm(v);
     }),
+});
+
+export const getUsersSchema = yup.object().shape({
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+});
+
+export const manipulationPostSchema = yup.object().shape({
+  status: yup
+    .string()
+    .required("Post status required")
+    .test("Valid post status", "Invalid post status", (v: any) => {
+      return Object.values(POST_STATUS).includes(v);
+    }),
+});
+
+export const updatePostSchema = yup.object().shape({
+  id_post: yup.string().required("Id post required"),
 });
 
 export const deleteTagsSchema = yup.object().shape({

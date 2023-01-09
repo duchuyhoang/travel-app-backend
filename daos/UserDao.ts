@@ -21,4 +21,10 @@ export class UserDao extends BaseDao {
     };
     return this.getClient().query(query);
   }
+  public deleteUser(id_actor: string, id_user: string) {
+    return this.getClient().query(
+      `DELETE FROM ${this.tableName} WHERE users.id = $1 AND users.id <> $2`,
+      [id_user, id_actor]
+    );
+  }
 }

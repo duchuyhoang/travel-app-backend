@@ -9,6 +9,8 @@ servers:
 tags:
   - name: user
     description: "Authentication router"
+  - name: admin
+    description: "Admin router"
   - name: media
     description: "Media service"
   - name: tags
@@ -214,6 +216,172 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
+
+  /admin/users:
+     get:
+      tags:
+        - admin
+      summary: Get list users
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: List users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/User"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Get tags failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+        "403":
+          description: Fobbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/FobbiddenError"
+
+  /admin/{id_user}:
+    delete:
+      tags:
+        - admin
+      summary: Delete user by id
+      parameters:
+        - in: path
+          name: id_user
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        "400":
+          description: Delete user failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+        
+        "403":
+          description: Fobbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/FobbiddenError"
+
+  /admin/post{id_post}:
+    patch:
+      tags:
+        - admin
+      summary: Manage post status
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Manage post status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: Reaction
+                  enum:
+                    - UNAPPROVED
+                    - APPROVED
+                    - BLOCKED
+      
+      responses:
+        "200":
+          description: Update post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Succeed
+
+        "400":
+          description: Update post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+        
+        "403":
+          description: Fobbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/FobbiddenError"
 
   /media/upload:
     post:
@@ -645,101 +813,6 @@ paths:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
 
-    patch:
-      tags:
-        - post
-      summary: Edit post
-      parameters:
-        - in: path
-          name: id_post
-          required: true
-          schema:
-            type: integer
-      security:
-        - BearerAuth: []
-
-      requestBody:
-        description: Edit post
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tags:
-                  type: array
-                  description: List tags
-                  items:
-                    type: string
-                content:
-                  type: string
-                  description: Post content(HTML)
-                title:
-                  type: string
-                  description: Post title
-      responses:
-        "200":
-          description: Edit post succeed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Succeed
-
-        "400":
-          description: Edit post failed
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/UnexpectedError"
-
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/UnauthorizedError"
-
-    delete:
-      tags:
-        - post
-      summary: Delete post by id
-      parameters:
-        - in: path
-          name: id_post
-          required: true
-          schema:
-            type: integer
-      security:
-        - BearerAuth: []
-
-      responses:
-        "200":
-          description: Succeed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-
-        "400":
-          description: Delete post failed
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/UnexpectedError"
-
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/UnauthorizedError"
-
   /comment:
     get:
       tags:
@@ -1010,6 +1083,7 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
+    
     post:
       tags:
         - tags
@@ -1321,6 +1395,16 @@ components:
           example: Unauthorized
         status:
           type: number
+          example: 401
+
+    FobbiddenError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Fobbidden
+        status:
+          type: number
           example: 403
 
     UnexpectedError:
@@ -1329,6 +1413,7 @@ components:
         message:
           type: string
           example: Unexpected error
+  
   securitySchemes:
     BearerAuth:
       type: http

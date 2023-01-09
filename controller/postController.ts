@@ -23,7 +23,6 @@ export const postController = {
     const client: Client = req.client;
     const postDao = new PostDao(client);
     const { limit, offset, orderBy } = req.query;
-    console.log(limit, orderBy);
 
     try {
       const rs = await postDao.getAllPosts(orderBy as ORDER_BY);
@@ -54,6 +53,7 @@ export const postController = {
       const [cachedPost] = await wrapperAsync(
         redisClient.get(`${POST_PREFIX}${id_post}`)
       );
+      console.log(cachedPost);
 
       if (cachedPost) {
         const parseData = JSON.parse(cachedPost);
@@ -65,7 +65,9 @@ export const postController = {
       const rs = await postDao.getById(id_post);
       const data = rs.rows[0];
       const [cachedRs, cachedPostErr] = await wrapperAsync(
-        redisClient.set(`${POST_PREFIX}${id_post}`, JSON.stringify(data))
+        redisClient.set(`${POST_PREFIX}${id_post}`, JSON.stringify(data), {
+          EX: 60 * 5,
+        })
       );
 
       return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
@@ -125,7 +127,10 @@ export const postController = {
       const [createCacheRs, errCreateCache] = await wrapperAsync(
         redisClient.set(
           `${POST_PREFIX}${post.id_post}`,
-          JSON.stringify(newPost)
+          JSON.stringify(newPost),
+          {
+            EX: 60 * 5,
+          }
         )
       );
       return jsonResponse(res, "Ok", STATUS_CODE.CREATED, newPost);

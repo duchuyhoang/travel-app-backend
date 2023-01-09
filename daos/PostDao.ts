@@ -1,4 +1,4 @@
-import { DEL_FLAG, ORDER_BY } from "@common/enum";
+import { DEL_FLAG, ORDER_BY, POST_STATUS } from "@common/enum";
 import { Client, QueryConfig } from "pg";
 import { BaseDao } from "./BaseDao";
 
@@ -7,6 +7,8 @@ export class PostDao extends BaseDao {
     super(client, "posts");
   }
   public async getAllPosts(orderBy?: ORDER_BY) {
+    console.log("hello");
+
     return this.getClient().query(`SELECT * FROM (
       SELECT
         posts.*,
@@ -83,9 +85,11 @@ export class PostDao extends BaseDao {
         LEFT JOIN tag ON post_tags.id_tag = tag.id_tag
         AND tag.del_flag = 1
         LEFT JOIN post_reactions ON post_reactions.id_post = posts.id_post
-        INNER JOIN users ON posts.author_id = users.id
+        LEFT JOIN users ON posts.author_id = users.id
     WHERE
-        posts.del_flag = ${DEL_FLAG.EXIST}
+        posts.del_flag = ${DEL_FLAG.EXIST} AND posts.status = '${
+      POST_STATUS.APPROVED
+    }'
     GROUP BY
         posts.id_post,
         users.id
@@ -140,14 +144,15 @@ export class PostDao extends BaseDao {
 		  FROM posts 
 		  LEFT JOIN post_tags ON posts.id_post=post_tags.id_post AND post_tags.del_flag = 1
 		  LEFT JOIN tag ON post_tags.id_tag=tag.id_tag AND tag.del_flag=1 
-		  INNER JOIN users ON posts.author_id = users.id 
+		  LEFT JOIN users ON posts.author_id = users.id 
 		  LEFT JOIN post_reactions ON post_reactions.id_post = posts.id_post
 		  WHERE posts.id_post = ${id_post} AND posts.del_flag = ${DEL_FLAG.EXIST}
+      AND posts.status = '${POST_STATUS.UNAPPROVED}' 
 		  GROUP BY posts.id_post,users.id`);
   }
   public async increaseView(id_post: string) {
     return this.getClient().query(
-      `UPDATE posts SET view = view + 1 WHERE id_post = ${id_post} AND del_flag=${DEL_FLAG.EXIST} RETURNING view`
+      `UPDATE posts SET view = view + 1 WHERE id_post = ${id_post} AND del_flag=${DEL_FLAG.EXIST} AND status='${POST_STATUS.APPROVED}' RETURNING view`
     );
   }
   public async searchByStringAndTags(
@@ -169,8 +174,8 @@ export class PostDao extends BaseDao {
 			FROM posts 
 			LEFT JOIN post_tags ON posts.id_post=post_tags.id_post AND post_tags.del_flag = 1
 			LEFT JOIN tag ON post_tags.id_tag=tag.id_tag AND tag.del_flag=1 
-			INNER JOIN users ON posts.author_id = users.id 
-			WHERE (${queryParameters
+			LEFT JOIN users ON posts.author_id = users.id 
+			WHERE posts.status = '${POST_STATUS.APPROVED}' AND (${queryParameters
         .map((v, _) => `posts.search LIKE $${index++}`)
         .join(" AND ")}) AND posts.del_flag = ${DEL_FLAG.EXIST}
       ${
