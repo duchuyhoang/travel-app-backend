@@ -32,13 +32,12 @@ const adminController = {
       ],
     });
 
-    return jsonResponse(res, "Succeed", STATUS_CODE.SUCCESS, {
-      data: pagination(
-        rows,
-        parseInt(limit as string),
-        parseInt(offset as string)
-      ),
-    });
+    return jsonResponse(
+      res,
+      "Succeed",
+      STATUS_CODE.SUCCESS,
+      pagination(rows, parseInt(limit as string), parseInt(offset as string))
+    );
   },
   deleteUser: async (req: Request, res: Response, next: NextFunction) => {
     const userDao = new UserDao(req.client);

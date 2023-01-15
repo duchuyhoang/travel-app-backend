@@ -18,16 +18,18 @@ postRouter.post(
   postController.insertPost
 );
 
+postRouter.get("/", validate(getPostSchema, ["query"]), postController.getPost);
+
 postRouter.get(
-  "/",
-  // validateToken,
+  "/byUser",
+  validateToken,
   validate(getPostSchema, ["query"]),
-  postController.getPost
+  postController.getPostByUser
 );
 
 postRouter.get(
   "/search",
-//   validateToken,
+  //   validateToken,
   validate(searchPostSchema, ["query"]),
   postController.searchPost
 );
@@ -39,16 +41,9 @@ postRouter.post(
   postController.updatePostReaction
 );
 
-postRouter.get(
-  "/",
-  validate(getPostSchema, ["query"]),
-  postController.getPost
-);
+postRouter.get("/", validate(getPostSchema, ["query"]), postController.getPost);
 
-postRouter.get(
-  "/:id_post",
-  postController.getById
-);
+postRouter.get("/:id_post", postController.getById);
 
 postRouter.patch(
   "/:id_post",

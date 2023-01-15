@@ -321,7 +321,7 @@ paths:
               schema:
                 $ref: "#components/schemas/FobbiddenError"
 
-  /admin/post{id_post}:
+  /admin/post/{id_post}:
     patch:
       tags:
         - admin
@@ -500,6 +500,10 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
+
+
+
+
 
     post:
       tags:
@@ -801,6 +805,69 @@ paths:
 
         "400":
           description: Edit post failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+  /post/byUser:
+    get:
+      tags:
+        - post
+      summary: Get posts by user (need validate)
+
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: orderBy
+          example: VIEW
+          schema:
+            type: string
+            enum: 
+              - VIEW
+              - CREATE_AT
+          description: Get post by user order by view or by create at
+
+      responses:
+        "200":
+          description: Get list post succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Post"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Create post failed
           content:
             application/json:
               schema:

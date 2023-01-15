@@ -3,7 +3,13 @@ import { NextFunction, Request, Response } from "express";
 import { IPostPayload, Post, DBPost } from "@models/Post";
 import { PostTagDao } from "@daos/PostTagDao";
 import { PostDao } from "@daos/PostDao";
-import { DEL_FLAG, ORDER_BY, POST_STATUS, REACTION_TYPE } from "@common/enum";
+import {
+  DEL_FLAG,
+  ORDER_BY,
+  PERMISSION,
+  POST_STATUS,
+  REACTION_TYPE,
+} from "@common/enum";
 import {
   convertDataToUpdateQuery,
   getImageSrcFromHTML,
@@ -16,6 +22,7 @@ import { DBError } from "@models/DBError";
 import { TagDao } from "@daos/TagDao";
 import { WHERE_OPERATOR } from "@daos/BaseDao";
 import { PostReactionDao } from "@daos/PostReactionDao";
+import { User, UserInfo } from "models/User";
 
 // POST_PREFIX
 export const postController = {
@@ -26,6 +33,29 @@ export const postController = {
 
     try {
       const rs = await postDao.getAllPosts(orderBy as ORDER_BY);
+      return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
+        ...pagination(
+          rs.rows,
+          parseInt(limit as string),
+          parseInt(offset as string)
+        ),
+      });
+    } catch (e: any) {
+      return jsonResponse(res, "Error", STATUS_CODE.BAD_REQUEST, e);
+    }
+  },
+  getPostByUser: async (req: Request, res: Response, next: NextFunction) => {
+    const client: Client = req.client;
+    const postDao = new PostDao(client);
+    const { limit, offset, orderBy } = req.query;
+    const user: UserInfo = req.user!;
+
+    try {
+      const rs = await postDao.getPostByUser(
+        user.id.toString(),
+        user.permission === PERMISSION.ADMIN,
+        orderBy as any
+      );
       return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
         ...pagination(
           rs.rows,
@@ -53,7 +83,6 @@ export const postController = {
       const [cachedPost] = await wrapperAsync(
         redisClient.get(`${POST_PREFIX}${id_post}`)
       );
-      console.log(cachedPost);
 
       if (cachedPost) {
         const parseData = JSON.parse(cachedPost);
