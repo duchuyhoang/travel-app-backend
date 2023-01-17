@@ -145,7 +145,7 @@ export class PostDao extends BaseDao {
 		  LEFT JOIN users ON posts.author_id = users.id 
 		  LEFT JOIN post_reactions ON post_reactions.id_post = posts.id_post
 		  WHERE posts.id_post = ${id_post} AND posts.del_flag = ${DEL_FLAG.EXIST}
-      AND posts.status = '${POST_STATUS.UNAPPROVED}' 
+      AND posts.status = '${POST_STATUS.APPROVED}' 
 		  GROUP BY posts.id_post,users.id`);
   }
   public async increaseView(id_post: string) {
