@@ -25,6 +25,15 @@ export class PostDao extends BaseDao {
             users.avatar
         ) userInfo,
         COALESCE(
+                json_agg(
+                    post_reactions
+                )
+				FILTER (
+                    WHERE
+                        post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL
+                ),'[]'
+            ) reactionLists,
+        COALESCE(
             json_agg(
                 json_build_object(
                     'id',
@@ -136,6 +145,16 @@ export class PostDao extends BaseDao {
 					AND post_reactions.id_user IS NOT NULL
 			)
 		) reactions,
+    COALESCE(
+      json_agg(
+          post_reactions
+      )
+FILTER (
+          WHERE
+              post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL
+      ),'[]'
+  ) reactionLists,
+
 		  json_build_object('id',users.id,'name',users.name,'email',users.email,'mobile',users.mobile,'info',users.info,'avatar',users.avatar) userInfo,
 		  COALESCE(json_agg(json_build_object('id',tag.id_tag,'tag_name',tag.tag_name,'tag_description',tag.tag_description)) 
 		  FILTER (WHERE tag.del_flag = 1 AND post_tags.del_flag=1),'[]') tags 
@@ -166,6 +185,15 @@ export class PostDao extends BaseDao {
     return this.getClient().query({
       text: `SELECT * FROM (
         SELECT posts.*,
+        COALESCE(
+          json_agg(
+              post_reactions
+          )
+  FILTER (
+              WHERE
+                  post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL
+          ),'[]'
+      ) reactionLists,
 			json_build_object('id',users.id,'name',users.name,'email',users.email,'mobile',users.mobile,'info',users.info,'avatar',users.avatar) userInfo,
 			COALESCE(json_agg(json_build_object('id',tag.id_tag,'tag_name',tag.tag_name,'tag_description',tag.tag_description)) 
 			FILTER (WHERE tag.del_flag = 1 AND post_tags.del_flag=1),'[]') tags 
@@ -198,6 +226,15 @@ export class PostDao extends BaseDao {
     return this.getClient().query(`SELECT * FROM (
       SELECT
         posts.*,
+        COALESCE(
+          json_agg(
+              post_reactions
+          )
+  FILTER (
+              WHERE
+                  post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL
+          ),'[]'
+      ) reactionLists,
         json_build_object(
             'id',
             users.id,
