@@ -7,25 +7,21 @@ import tagController from "@controller/tagController";
 import { validateToken } from "@middleware/jwt";
 import { validate } from "@middleware/validate";
 import express, { Router } from "express";
+import { validateAdmin } from "@middleware/admin.middleware";
 const tagRouter: Router = express.Router();
 
 tagRouter.post(
   "/",
-  validateToken,
+  validateAdmin,
   validate(createTagsSchema, ["body"]),
   tagController.createTags
 );
 
-tagRouter.get(
-  "/",
-  validateToken,
-  validate(getTagSchema, ["query"]),
-  tagController.getAllTags
-);
+tagRouter.get("/", validate(getTagSchema, ["query"]), tagController.getAllTags);
 
 tagRouter.delete(
   "/",
-  validateToken,
+  validateAdmin,
   validate(deleteTagsSchema, ["body"]),
   tagController.deleteTags
 );

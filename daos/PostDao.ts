@@ -201,6 +201,7 @@ FILTER (
 			LEFT JOIN post_tags ON posts.id_post=post_tags.id_post AND post_tags.del_flag = 1
 			LEFT JOIN tag ON post_tags.id_tag=tag.id_tag AND tag.del_flag=1 
 			LEFT JOIN users ON posts.author_id = users.id 
+      LEFT JOIN post_reactions ON post_reactions.id_post = posts.id_post
 			WHERE posts.status = '${POST_STATUS.APPROVED}' AND (${queryParameters
         .map((v, _) => `posts.search LIKE $${index++}`)
         .join(" AND ")}) AND posts.del_flag = ${DEL_FLAG.EXIST}
