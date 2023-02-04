@@ -56,33 +56,39 @@ export class PostDao extends BaseDao {
                 WHERE
                     post_reactions.reaction_type = 'LIKE'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'angries',
             COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'ANGRY'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'sads',
             COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'SAD'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'wows', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'WOW'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'laughs', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'LAUGH'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'hearts', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'HEART'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             )
         ) reactions
     FROM
@@ -116,33 +122,39 @@ export class PostDao extends BaseDao {
 				WHERE
 					post_reactions.reaction_type = 'LIKE'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			),
 			'angries',
 			COUNT(post_reactions.reaction_type) FILTER (
 				WHERE
 					post_reactions.reaction_type = 'ANGRY'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			),
 			'sads',
 			COUNT(post_reactions.reaction_type) FILTER (
 				WHERE
 					post_reactions.reaction_type = 'SAD'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			),
 			'wows', COUNT(post_reactions.reaction_type) FILTER (
 				WHERE
 					post_reactions.reaction_type = 'WOW'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			),
 			'laughs', COUNT(post_reactions.reaction_type) FILTER (
 				WHERE
 					post_reactions.reaction_type = 'LAUGH'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			),
 			'hearts', COUNT(post_reactions.reaction_type) FILTER (
 				WHERE
 					post_reactions.reaction_type = 'HEART'
 					AND post_reactions.id_user IS NOT NULL
+          AND post_reactions.del_flag = 1
 			)
 		) reactions,
     COALESCE(
@@ -273,33 +285,39 @@ FILTER (
                 WHERE
                     post_reactions.reaction_type = 'LIKE'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'angries',
             COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'ANGRY'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'sads',
             COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'SAD'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'wows', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'WOW'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'laughs', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'LAUGH'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             ),
             'hearts', COUNT(post_reactions.reaction_type) FILTER (
                 WHERE
                     post_reactions.reaction_type = 'HEART'
                     AND post_reactions.id_user IS NOT NULL
+                    AND post_reactions.del_flag = 1
             )
         ) reactions
     FROM
