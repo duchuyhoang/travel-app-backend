@@ -6,6 +6,7 @@ import {
   signUpSchema,
   loginSocialSchema,
   editProfileSchema,
+  editPasswordSchema,
 } from "@common/vaidation";
 import authenticationController from "@controller/authenticationController";
 import { validateToken } from "@middleware/jwt";
@@ -39,6 +40,13 @@ userRouter.patch(
   validate(editProfileSchema, ["body", "file"]),
   handleSaveFile,
   authenticationController.edit
+);
+
+userRouter.patch(
+  "/changePassword",
+  validateToken,
+  validate(editPasswordSchema, ["body"]),
+  authenticationController.changePassword
 );
 
 export default userRouter;

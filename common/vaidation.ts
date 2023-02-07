@@ -69,6 +69,12 @@ export const loginSocialSchema = yup.object().shape({
 });
 
 export const editProfileSchema = yup.object().shape({ ...userInfoValidation });
+
+export const editPasswordSchema = yup.object().shape({
+  newPassword: yup.string().required("New password required"),
+  oldPassword: yup.string().required("Old password required"),
+});
+
 export const mediaUploadSchema = yup.object().shape({
   files: multipleFileValidation,
 });

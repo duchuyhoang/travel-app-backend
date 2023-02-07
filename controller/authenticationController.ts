@@ -211,6 +211,63 @@ const authenticationController = {
     }
     return jsonResponse(res, "Edit succeed", STATUS_CODE.SUCCESS);
   },
+  changePassword: async (req: Request, res: Response, next: NextFunction) => {
+    const { oldPassword, newPassword } = req.body;
+    const currentUser = req.user;
+    const client: Client = req.client;
+    const userDao = new UserDao(client);
+    try {
+      const users: QueryResult<User> = await userDao.getUserByEmailAndMethod(
+        currentUser?.email!,
+        AUTH_METHOD.PASSWORD
+      );
+      if (users.rowCount === 0) {
+        return jsonResponse(
+          res,
+          "Email or password is incorrect",
+          STATUS_CODE.UNAUTHORIZED
+        );
+      }
+      const user = users.rows[0];
+      const hashedPassword = cryto
+        .pbkdf2Sync(oldPassword, user.salt, 1000, 64, "sha512")
+        .toString("hex");
+      const { password_hash, salt, ...info } = user;
+
+      if (hashedPassword !== password_hash)
+        return jsonResponse(
+          res,
+          "Email or password is incorrect",
+          STATUS_CODE.UNAUTHORIZED
+        );
+
+      const newHashPassword = cryto
+        .pbkdf2Sync(newPassword, user.salt, 1000, 64, "sha512")
+        .toString("hex");
+
+      const updateRs = await userDao.updateOne(
+        [
+          {
+            key: "password_hash",
+            value: newHashPassword,
+          },
+        ],
+        [
+          {
+            key: "id",
+            value: currentUser?.id,
+          },
+        ]
+      );
+      return jsonResponse(res, "Update password succeed", STATUS_CODE.SUCCESS);
+    } catch (e) {
+      return jsonResponse(
+        res,
+        "Update password failed",
+        STATUS_CODE.BAD_REQUEST
+      );
+    }
+  },
 };
 
 export default authenticationController;
