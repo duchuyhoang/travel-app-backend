@@ -109,7 +109,7 @@ export const pagination = (
   return {
     data:
       notNull(offset) && notNull(limit)
-        ? list.slice(offset!, (offset! + 1) * limit!)
+        ? list.slice(offset!, offset! + limit!)
         : list,
     metadata: {
       total: list.length,
