@@ -7,6 +7,8 @@ import {
   loginSocialSchema,
   editProfileSchema,
   editPasswordSchema,
+  forgetEmailSchema,
+  editForgotPasswordSchema,
 } from "@common/vaidation";
 import authenticationController from "@controller/authenticationController";
 import { validateToken } from "@middleware/jwt";
@@ -47,6 +49,18 @@ userRouter.patch(
   validateToken,
   validate(editPasswordSchema, ["body"]),
   authenticationController.changePassword
+);
+
+userRouter.post(
+  "/sendForgetEmail",
+  validate(forgetEmailSchema, ["body"]),
+  authenticationController.sendForgetEmail
+);
+
+userRouter.post(
+  "/changeForgotPassword",
+  validate(editForgotPasswordSchema, ["body"]),
+  authenticationController.forgetPasswordHandler
 );
 
 export default userRouter;

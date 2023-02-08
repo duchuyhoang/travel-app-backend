@@ -24,3 +24,6 @@ export const UPLOAD_FOLDER = "uploads";
 export const POST_PREFIX = "post:";
 
 export const VERIFY_USER_PREFIX = "user_verify_token:";
+
+export const FORGET_EMAIL_PREFIX = "forget_email_token:";
+

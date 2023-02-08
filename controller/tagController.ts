@@ -1,8 +1,13 @@
-import { STATUS_CODE } from "@common/constants";
+import { POST_PREFIX, STATUS_CODE } from "@common/constants";
 import { DEL_FLAG } from "@common/enum";
 import { WHERE_OPERATOR } from "@daos/BaseDao";
 import { TagDao } from "@daos/TagDao";
-import { convertToBulkInsert, jsonResponse, pagination } from "@helpers/index";
+import {
+  convertToBulkInsert,
+  jsonResponse,
+  pagination,
+  wrapperAsync,
+} from "@helpers/index";
 import { NextFunction, Request, Response } from "express";
 
 import { Client, DatabaseError, QueryResult } from "pg";
@@ -76,8 +81,17 @@ const tagController = {
     const client: Client = req.client;
     const { tags } = req.body;
     const tagDao = new TagDao(client);
+    const redisClient = req.redisClient;
     try {
+      const [rs, err] = await wrapperAsync(
+        redisClient.sendCommand(["KEYS", `${POST_PREFIX}*`])
+      );
+
+      if (rs && rs.length > 0) {
+        await wrapperAsync(redisClient.sendCommand(["DEL", rs.join(" ")]));
+      }
       await tagDao.deleteTags(tags);
+
       return jsonResponse(res, "Delete succeed", STATUS_CODE.SUCCESS);
     } catch (e) {
       return jsonResponse(res, "Delete failed", STATUS_CODE.BAD_REQUEST, { e });

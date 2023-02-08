@@ -71,8 +71,25 @@ export const loginSocialSchema = yup.object().shape({
 export const editProfileSchema = yup.object().shape({ ...userInfoValidation });
 
 export const editPasswordSchema = yup.object().shape({
-  newPassword: yup.string().required("New password required"),
+  newPassword: yup
+    .string()
+    .required("New password required")
+    .min(6, "Password at least 6 characters")
+    .max(255, "Password is too long"),
   oldPassword: yup.string().required("Old password required"),
+});
+
+export const forgetEmailSchema = yup.object().shape({
+  email: yup.string().required("Email required").email("Invalid email"),
+});
+
+export const editForgotPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .required("New password required")
+    .min(6, "Password at least 6 characters")
+    .max(255, "Password is too long"),
+  token: yup.string().required("Token required"),
 });
 
 export const mediaUploadSchema = yup.object().shape({
