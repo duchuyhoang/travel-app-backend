@@ -2,13 +2,13 @@ import { validateAdmin } from "@middleware/admin.middleware";
 import express from "express";
 import adminController from "@controller/adminController";
 import { validate } from "@middleware/validate";
-import { getUsersSchema, manipulationPostSchema } from "@common/vaidation";
+import { getPostByTimeSchema, getUsersSchema, manipulationPostSchema } from "@common/vaidation";
 
 const adminRouter = express.Router();
 
 adminRouter.get(
   "/users",
-  validateAdmin,
+  // validateAdmin,
   validate(getUsersSchema, ["query"]),
 
   adminController.getAllUsers
@@ -27,5 +27,11 @@ adminRouter.patch(
   adminController.manipulationPost
 );
 
+adminRouter.get(
+  "/postByTime",
+  validateAdmin,
+  validate(getPostByTimeSchema, ["query"]),
+  adminController.countPostByTime
+);
 
 export default adminRouter;

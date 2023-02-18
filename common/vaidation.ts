@@ -1,6 +1,7 @@
 import { EMAIL_REGEX, MAX_FILE_SIZE, MOBILE_REGEX } from "@common/constants";
 import { isInDesiredForm } from "@helpers/index";
 import { isImage } from "@middleware/file";
+import moment from "moment";
 import * as yup from "yup";
 import { AUTH_METHOD, DEL_FLAG, POST_STATUS, REACTION_TYPE } from "./enum";
 
@@ -167,6 +168,21 @@ export const manipulationPostSchema = yup.object().shape({
     .required("Post status required")
     .test("Valid post status", "Invalid post status", (v: any) => {
       return Object.values(POST_STATUS).includes(v);
+    }),
+});
+
+export const getPostByTimeSchema = yup.object().shape({
+  start: yup
+    .string()
+    .required("Start time required")
+    .test("Invalid start", "Invalid start", (v: any) => {
+      return moment(parseInt(v)).isValid();
+    }),
+  end: yup
+    .string()
+    .required("End time required")
+    .test("Invalid end", "Invalid end", (v: any) => {
+      return moment(parseInt(v)).isValid();
     }),
 });
 

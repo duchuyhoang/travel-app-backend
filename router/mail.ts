@@ -14,7 +14,7 @@ mailRouter.post(
 
 mailRouter.post(
   "/verify-email",
-  validateToken,
+  // validateToken,
   validate(verifyEmailSchema, ["body"]),
   mailController.verifyAccount
 );

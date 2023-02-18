@@ -4,6 +4,7 @@ import { PostDao } from "@daos/PostDao";
 import { UserDao } from "@daos/UserDao";
 import { NextFunction, Request, Response } from "express";
 import { jsonResponse, pagination } from "@helpers/index";
+import { StastisticalDao } from "@daos/StastisticalDao";
 
 const adminController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
@@ -85,6 +86,25 @@ const adminController = {
       }
     } catch (e) {
       return jsonResponse(res, "Unexpected error", STATUS_CODE.BAD_REQUEST);
+    }
+  },
+  countPostByTime: async (req: Request, res: Response, next: NextFunction) => {
+    const client = req.client;
+    const { start, end } = req.query;
+    const adminDao = new StastisticalDao(client);
+    try {
+      const data = await adminDao.getTotalPostByDateRange(
+        start as string,
+        end as string
+      );
+      return jsonResponse(res, "Succeed", STATUS_CODE.SUCCESS, {
+        data: data.rows,
+      });
+    } catch (e) {
+      console.log(e);
+      return jsonResponse(res, "Failed", STATUS_CODE.SUCCESS, {
+        data: [],
+      });
     }
   },
 };
