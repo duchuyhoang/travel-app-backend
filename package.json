@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "export REDIS_PORT=6379 && concurrently \"redis-server --port ${REDIS_PORT}\" \"export NODE_ENV=DEVELOPMENT && nodemon app.ts\"",
     "build": "tsc --build",
-    "start:prod": "export NODE_ENV=PRODUCTION REDIS_PORT=6379 && node build/app.js"
+    "start:prod": "export NODE_ENV=PRODUCTION REDIS_PORT=6379 && node build/app.js",
+    "abc": "ts-node test.ts"
   },
   "_moduleAliases": {
     "@root": "./build",
@@ -34,12 +35,14 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
+    "moment": "^2.29.4",
     "multer": "^1.4.5-lts.1",
     "node-html-parser": "^6.1.4",
     "nodemailer": "^6.8.0",
     "pg": "^8.8.0",
     "pg-promise": "^10.12.1",
     "redis": "^4.5.1",
+    "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.6.0",
     "ts-node": "^10.9.1",
     "ts-transformer-keys": "^0.4.3",

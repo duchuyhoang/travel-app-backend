@@ -8,7 +8,7 @@ const adminRouter = express.Router();
 
 adminRouter.get(
   "/users",
-  // validateAdmin,
+  validateAdmin,
   validate(getUsersSchema, ["query"]),
 
   adminController.getAllUsers
