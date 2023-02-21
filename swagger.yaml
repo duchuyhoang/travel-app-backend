@@ -345,6 +345,43 @@ paths:
               schema:
                 $ref: "#components/schemas/UnexpectedError"
 
+  /user/userInfo:
+    get:
+      tags:
+        - user
+      summary: Get user info
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Get user info
+      responses:
+        "200":
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    ref: "#components/schemas/User"
+
+        "400":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "400":
+          description: User not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
 
   /admin/users:
      get:

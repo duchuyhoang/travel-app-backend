@@ -402,6 +402,41 @@ const authenticationController = {
       return jsonResponse(res, "Unexpected error", STATUS_CODE.BAD_REQUEST);
     }
   },
+  getUserInfo: async (req: Request, res: Response, next: NextFunction) => {
+    const client: Client = req.client;
+    const userDao = new UserDao(client);
+    const user = req.user;
+    if (!user)
+      return jsonResponse(
+        res,
+        "User doesnt exist",
+        STATUS_CODE.BAD_REQUEST,
+        {}
+      );
+    try {
+      const { rows } = await userDao.getAll({
+        wheres: [
+          {
+            key: "id",
+            value: user?.id,
+          },
+        ],
+      });
+      if (rows.length === 0)
+        return jsonResponse(
+          res,
+          "User doesnt exist",
+          STATUS_CODE.BAD_REQUEST,
+          {}
+        );
+      const { password_hash, salt, ...userInfo } = rows[0];
+      return jsonResponse(res, "Succeed", STATUS_CODE.SUCCESS, {
+        data: userInfo,
+      });
+    } catch (e) {
+      return jsonResponse(res, "Unexpected error", STATUS_CODE.BAD_REQUEST, {});
+    }
+  },
 };
 
 export default authenticationController;

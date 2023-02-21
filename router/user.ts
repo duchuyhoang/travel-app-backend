@@ -63,4 +63,10 @@ userRouter.post(
   authenticationController.forgetPasswordHandler
 );
 
+userRouter.get(
+  "/userInfo",
+  validateToken,
+  authenticationController.getUserInfo
+);
+
 export default userRouter;
