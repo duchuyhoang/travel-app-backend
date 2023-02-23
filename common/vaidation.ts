@@ -283,3 +283,24 @@ export const getPostCommentSchema = yup.object().shape({
 export const verifyEmailSchema = yup.object().shape({
   token: yup.string().required("Token required"),
 });
+
+export const getBookmarkSchema = yup.object().shape({
+  limit: yup
+    .string()
+    .nullable()
+    .test("limit-valid", "Invalid limit", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+  offset: yup
+    .string()
+    .nullable()
+    .test("offset-valid", "Invalid offset", (v) => {
+      if (!v) return true;
+      return isInDesiredForm(v);
+    }),
+});
+
+export const toggleBookmarkSchema = yup.object().shape({
+  id_post: yup.string().required("Id post required"),
+});

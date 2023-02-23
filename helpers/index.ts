@@ -123,7 +123,7 @@ export const pagination = (
       limit: limit,
       hasMore:
         notNull(limit) && notNull(offset)
-          ? list.length > offset! * limit!
+          ? list.length > ((offset || 0) + 1)! * limit!
           : false,
     },
   };

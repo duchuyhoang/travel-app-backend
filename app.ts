@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === "DEVELOPMENT") {
   dotenv.config({
     path: path.join(__dirname, ".env.development"),
   });
+  // moduleAlias();
 } else {
   dotenv.config();
   moduleAlias();
@@ -22,6 +23,7 @@ import postRouter from "@router/post";
 import commentRouter from "@router/post_comment";
 import mailRouter from "@router/mail";
 import adminRouter from "@router/admin";
+import bookmarkRouter from "@router/bookmark";
 
 import { ValidationError } from "@models/ValidationError";
 import morgan from "morgan";
@@ -60,10 +62,8 @@ const runServer = async () => {
     app.use("/comment", commentRouter);
     app.use("/mail", mailRouter);
     app.use("/admin", adminRouter);
+    app.use("/bookmark", bookmarkRouter);
 
-    app.get("/hello", (req, res) => {
-      res.json({ mes: "xxx" });
-    });
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     app.use(
       (

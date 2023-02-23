@@ -34,6 +34,8 @@ services:
       - cache
     ports:
       - "3002:3002"
+    volumes:
+      - ./uploads:/travel-app-backend/uploads
     # network_mode: ""
 
   commander:

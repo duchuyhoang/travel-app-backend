@@ -21,6 +21,8 @@ tags:
     description: "Comment router"
   - name: mail
     description: "Mail router"
+  - name: bookmark
+    description: "Bookmark router"
 
 paths:
   /user/signUp:
@@ -1475,6 +1477,101 @@ paths:
                   - $ref: "#components/schemas/ValidationError"
                   - $ref: "#components/schemas/UnexpectedError"
 
+  /bookmark/:
+    get:
+      tags:
+        - bookmark
+      summary: Get bookmark by current user
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: List bookmark
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Bookmark"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: Get tags failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+    
+    patch:
+      tags:
+        - bookmark
+      summary: Toggle bookmark password
+      security:
+        - BearerAuth: []
+
+      requestBody:
+        description: Toggle bookmark body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_post:
+                  type: string
+                  required: true
+      responses:
+        "200":
+          description: Toggle bookmark succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        "400":
+          description: Toggle bookmark failed
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
+
+
 components:
   schemas:
     User:
@@ -1594,6 +1691,17 @@ components:
         del_flag:
           type: number
         
+    Bookmark:
+      type: object
+      properties:
+        id:
+          type: string
+        user_info:
+          type: object
+          $ref: "#components/schemas/User"
+        post_info:
+          type: "#components/schemas/Post"
+       
     Metadata:
       type: object
       properties:
