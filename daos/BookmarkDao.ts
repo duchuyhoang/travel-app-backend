@@ -22,7 +22,7 @@ export class BookmarkDao extends BaseDao {
   public async getBookmarkByCurUser(id_user: string) {
     return this.getClient().query({
       text: `SELECT bookmark.id,
-        row_to_json(posts)::jsonb - '{content,search}'::text[] post_info,
+        row_to_json(posts)::jsonb - '{content}'::text[] post_info,
         row_to_json(users)::jsonb - '{password_hash,salt}'::text[] user_info 
         from bookmark INNER JOIN posts ON bookmark.id_post = posts.id_post INNER JOIN users ON bookmark.id_user = users.id
         WHERE users.id = $1 AND bookmark.del_flag = ${DEL_FLAG.EXIST}`,
