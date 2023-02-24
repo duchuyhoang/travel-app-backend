@@ -30,9 +30,11 @@ export const postController = {
     const client: Client = req.client;
     const postDao = new PostDao(client);
     const { limit, offset, orderBy } = req.query;
+    const user: UserInfo | undefined = req.user;
+    console.log("us", user);
 
     try {
-      const rs = await postDao.getAllPosts(orderBy as ORDER_BY);
+      const rs = await postDao.getAllPosts(orderBy as ORDER_BY, user?.id);
       return jsonResponse(res, "Ok", STATUS_CODE.SUCCESS, {
         ...pagination(
           rs.rows,

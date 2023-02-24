@@ -13,6 +13,12 @@ bookmarkRouter.get(
   bookmarkController.getBookmarkByCurUser
 );
 
+bookmarkRouter.get(
+  "/isBookmarByCur/:id_post",
+  validateToken,
+  bookmarkController.isBookmarByCurUse
+);
+
 bookmarkRouter.patch(
   "/",
   validateToken,

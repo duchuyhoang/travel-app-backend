@@ -6,7 +6,7 @@ export class PostDao extends BaseDao {
   constructor(client: Client) {
     super(client, "posts");
   }
-  public async getAllPosts(orderBy?: ORDER_BY) {
+  public async getAllPosts(orderBy?: ORDER_BY, id_user?: number) {
     return this.getClient().query(`SELECT * FROM (
       SELECT
         posts.*,
@@ -91,6 +91,11 @@ export class PostDao extends BaseDao {
                     AND post_reactions.del_flag = 1
             )
         ) reactions
+    ${
+      id_user
+        ? `,EXISTS(SELECT 1 FROM bookmark WHERE bookmark.id_post = posts.id_post AND bookmark.id_user = ${id_user} AND bookmark.del_flag = ${DEL_FLAG.EXIST}) is_bookmarked`
+        : ""
+    }
     FROM
         posts
         LEFT JOIN post_tags ON posts.id_post = post_tags.id_post

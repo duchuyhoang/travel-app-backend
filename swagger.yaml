@@ -1527,7 +1527,7 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
-    
+
     patch:
       tags:
         - bookmark
@@ -1569,6 +1569,55 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/UnauthorizedError"
+
+  /bookmark/isBookmarByCur/{id_post}:
+    get:
+      tags:
+        - bookmark
+      summary: Current user bookmark
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - in: path
+          name: id_post
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: "#components/schemas/Bookmark"
+                  metadata:
+                    type: object
+                    $ref: "#components/schemas/Metadata"
+
+        "400":
+          description: "No"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnexpectedError"
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/UnauthorizedError"
+
 
 
 

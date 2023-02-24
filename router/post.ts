@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { validate } from "@middleware/validate";
 import { postController } from "@controller/postController";
-import { validateToken } from "@middleware/jwt";
+import { validateToken, optionalValidateToken } from "@middleware/jwt";
 import {
   getPostSchema,
   insertPostSchema,
@@ -18,7 +18,12 @@ postRouter.post(
   postController.insertPost
 );
 
-postRouter.get("/", validate(getPostSchema, ["query"]), postController.getPost);
+postRouter.get(
+  "/",
+  validate(getPostSchema, ["query"]),
+  optionalValidateToken,
+  postController.getPost
+);
 
 postRouter.get(
   "/byUser",
