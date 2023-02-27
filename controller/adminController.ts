@@ -1,5 +1,5 @@
 import { STATUS_CODE } from "@common/constants";
-import { POST_STATUS } from "@common/enum";
+import { PERMISSION, POST_STATUS } from "@common/enum";
 import { PostDao } from "@daos/PostDao";
 import { UserDao } from "@daos/UserDao";
 import { NextFunction, Request, Response } from "express";
@@ -26,8 +26,8 @@ const adminController = {
       ],
       wheres: [
         {
-          key: "email",
-          value: currentAdmin?.email,
+          key: "permission",
+          value: PERMISSION.ADMIN,
           notEqual: true,
         },
       ],
