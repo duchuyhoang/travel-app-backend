@@ -12,7 +12,7 @@ const tagRouter: Router = express.Router();
 
 tagRouter.post(
   "/",
-  validateAdmin,
+  // validateAdmin,
   validate(createTagsSchema, ["body"]),
   tagController.createTags
 );
