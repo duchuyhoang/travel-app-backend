@@ -26,11 +26,11 @@ export class PostDao extends BaseDao {
         ) userInfo,
         COALESCE(
                 json_agg(
-                    post_reactions
+                  DISTINCT post_reactions
                 )
 				FILTER (
                     WHERE
-                        post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL
+                        post_reactions.del_flag = 1 AND post_reactions.id_user IS NOT NULL AND post_reactions.id_post = posts.id_post
                 ),'[]'
             ) reactionLists,
         COALESCE(
@@ -164,7 +164,7 @@ export class PostDao extends BaseDao {
 		) reactions,
     COALESCE(
       json_agg(
-          post_reactions
+        DISTINCT post_reactions
       )
 FILTER (
           WHERE
@@ -246,7 +246,7 @@ FILTER (
         posts.*,
         COALESCE(
           json_agg(
-              post_reactions
+            DISTINCT post_reactions
           )
   FILTER (
               WHERE
