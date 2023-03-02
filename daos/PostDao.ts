@@ -114,7 +114,7 @@ export class PostDao extends BaseDao {
     ) as results 
     ORDER BY ${
       orderBy === ORDER_BY.CREATE_AT
-        ? `CASE WHEN results.create_at IS NULL THEN 1 ELSE 0 END`
+        ? `results.create_at DESC NULLS LAST`
         : `results.view DESC`
     },
     CAST(results.reactions->>'likes' AS bigint) DESC;`);
@@ -343,7 +343,7 @@ FILTER (
     ) as results 
     ORDER BY ${
       orderBy === ORDER_BY.CREATE_AT
-        ? `CASE WHEN results.create_at IS NULL THEN 1 ELSE 0 END`
+        ? `results.create_at DESC NULLS LAST`
         : `results.view DESC`
     },
     CAST(results.reactions->>'likes' AS bigint) DESC;`);
