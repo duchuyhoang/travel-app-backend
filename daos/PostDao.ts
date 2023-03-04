@@ -35,15 +35,9 @@ export class PostDao extends BaseDao {
             ) reactionLists,
         COALESCE(
             json_agg(
-                json_build_object(
-                    'id',
-                    tag.id_tag,
-                    'tag_name',
-                    tag.tag_name,
-                    'tag_description',
-                    tag.tag_description
-                )
-            ) FILTER (
+                DISTINCT tag
+              )
+             FILTER (
                 WHERE
                     tag.del_flag = 1
                     AND post_tags.del_flag = 1
@@ -173,7 +167,9 @@ FILTER (
   ) reactionLists,
 
 		  json_build_object('id',users.id,'name',users.name,'email',users.email,'mobile',users.mobile,'info',users.info,'avatar',users.avatar) userInfo,
-		  COALESCE(json_agg(json_build_object('id',tag.id_tag,'tag_name',tag.tag_name,'tag_description',tag.tag_description)) 
+		  COALESCE(json_agg(
+        DISTINCT tag
+      ) 
 		  FILTER (WHERE tag.del_flag = 1 AND post_tags.del_flag=1),'[]') tags 
 		  FROM posts 
 		  LEFT JOIN post_tags ON posts.id_post=post_tags.id_post AND post_tags.del_flag = 1
@@ -212,7 +208,9 @@ FILTER (
           ),'[]'
       ) reactionLists,
 			json_build_object('id',users.id,'name',users.name,'email',users.email,'mobile',users.mobile,'info',users.info,'avatar',users.avatar) userInfo,
-			COALESCE(json_agg(json_build_object('id',tag.id_tag,'tag_name',tag.tag_name,'tag_description',tag.tag_description)) 
+			COALESCE(json_agg(
+        DISTINCT tag
+      )
 			FILTER (WHERE tag.del_flag = 1 AND post_tags.del_flag=1),'[]') tags 
 			FROM posts 
 			LEFT JOIN post_tags ON posts.id_post=post_tags.id_post AND post_tags.del_flag = 1
@@ -268,16 +266,9 @@ FILTER (
             users.avatar
         ) userInfo,
         COALESCE(
-            json_agg(
-                json_build_object(
-                    'id',
-                    tag.id_tag,
-                    'tag_name',
-                    tag.tag_name,
-                    'tag_description',
-                    tag.tag_description
-                )
-            ) FILTER (
+          json_agg(
+            DISTINCT tag
+          ) FILTER (
                 WHERE
                     tag.del_flag = 1
                     AND post_tags.del_flag = 1
